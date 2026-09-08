@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/landscape1_11.png</file>
+        <file>assets/landscape1_10.png</file>
+        <file>assets/landscape1_9.png</file>
+        <file>assets/landscape1_8.png</file>
+        <file>assets/landscape1_7.png</file>
+        <file>assets/landscape1_6.png</file>
+        <file>assets/landscape1_5.png</file>
+        <file>assets/landscape1_4.png</file>
+        <file>assets/obstacle1_1.png</file>
+        <file>assets/obstacle1_2.png</file>
+        <file>assets/obstacle1_3.png</file>
+        <file>assets/obstacle1_4.png</file>
+        <file>assets/rescue_1.png</file>
+        <file>assets/rescue_2.png</file>
+        <file>assets/rescue_3.png</file>
+        <file>assets/chopper1_1.png</file>
+        <file>assets/missile.png</file>
+        <file>assets/drone.png</file>
+        <file>assets/sky1_1.png</file>
+        <file>assets/sky1_2.png</file>
+        <file>assets/sky1_3.png</file>
+        <file>assets/sky1_4.png</file>
+        <file>assets/sky1_5.png</file>
+        <file>assets/sky1_6.png</file>
+        <file>assets/sky1_7.png</file>
+        <file>assets/sky1_8.png</file>
+        <file>assets/sky1_9.png</file>
+        <file>assets/sky1_10.png</file>
+        <file>assets/sky1_11.png</file>
+        <file>assets/landscape1_1.png</file>
+        <file>assets/landscape1_2.png</file>
+        <file>assets/landscape1_3.png</file>
+    </qresource>
+</RCC>
