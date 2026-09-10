@@ -65,9 +65,7 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
     Edificio *nuevoEdificio = new Edificio();
 
     qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150); // 100 a 250 pixeles
-    nuevoEdificio->setPixmap(
-        nuevoEdificio->pixmap().scaled(80, alturaAleatoria, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)
-        );
+    nuevoEdificio->setPixmap(nuevoEdificio->pixmap().scaled(80, alturaAleatoria, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     nuevoEdificio->setPos(anchoEscena, altoEscena - alturaAleatoria);
 
     escena->addItem(nuevoEdificio);

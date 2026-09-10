@@ -1,3 +1,4 @@
+// Helicoptero.h
 #ifndef HELICOPTERO_H
 #define HELICOPTERO_H
 
@@ -14,12 +15,19 @@ public:
     void actualizarFisica(qreal deltaTime);
 
     void setAscenso(bool activo);
+    void setMoverIzquierda(bool activo);
+    void setMoverDerecha(bool activo);
 
 private:
     qreal velocidadVertical;
     qreal gravedad;
     qreal anguloInclinacion;
+
     bool ascensoActivo;
+
+    qreal velocidadHorizontal;
+    bool izquierdaActiva;
+    bool derechaActiva;
 };
 
 #endif // HELICOPTERO_H
