@@ -1,0 +1,200 @@
+#include "MenuPrincipal.h"
+#include "NucleoFisico.h"
+#include "VentanaPuntajes.h"
+
+#include <QApplication>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+
+MenuPrincipal::MenuPrincipal(QWidget* parent)
+    : QMainWindow(parent)
+    , gestorPuntajes_("scores.txt", "saves.txt")
+{
+    setWindowTitle("Helicopter Rescue");
+    setFixedSize(900, 580);
+    crearInterfaz();
+}
+
+MenuPrincipal::~MenuPrincipal()
+{
+    gestorPuntajes_.guardarPuntajes();
+    gestorPuntajes_.guardarPartidas();
+}
+
+void MenuPrincipal::crearInterfaz()
+{
+    auto* central = new QWidget(this);
+    auto* layout = new QVBoxLayout(central);
+    layout->setContentsMargins(40, 30, 40, 30);
+    layout->setSpacing(16);
+
+    auto* titulo = new QLabel("HELICOPTER RESCUE", central);
+    titulo->setAlignment(Qt::AlignCenter);
+    titulo->setStyleSheet(
+        "font-size: 42px; font-weight: 800; color: #f4f7fb;"
+        "letter-spacing: 2px;");
+
+    auto* subtitulo = new QLabel("Mision de rescate aereo", central);
+    subtitulo->setAlignment(Qt::AlignCenter);
+    subtitulo->setStyleSheet("font-size: 16px; color: #9eb6d4; margin-bottom: 10px;");
+
+    auto* panel = new QFrame(central);
+    panel->setObjectName("panelMenu");
+    auto* layoutPanel = new QVBoxLayout(panel);
+    layoutPanel->setContentsMargins(28, 24, 28, 24);
+    layoutPanel->setSpacing(12);
+
+    auto* etiquetaNombre = new QLabel("Nombre del piloto:", panel);
+    etiquetaNombre->setStyleSheet("color: #d7e4f5; font-size: 14px;");
+
+    entradaNombre_ = new QLineEdit(panel);
+    entradaNombre_->setPlaceholderText("Escribe tu nombre...");
+    entradaNombre_->setMaxLength(24);
+    entradaNombre_->setMinimumHeight(36);
+
+    auto* botonJugar = crearBotonMenu("Jugar");
+    auto* botonPuntajes = crearBotonMenu("Puntajes y partidas");
+    auto* botonInstrucciones = crearBotonMenu("Instrucciones");
+    auto* botonSalir = crearBotonMenu("Salir");
+    botonSalir->setObjectName("botonSalir");
+
+    connect(botonJugar, &QPushButton::clicked, this, &MenuPrincipal::alJugar);
+    connect(botonPuntajes, &QPushButton::clicked, this, &MenuPrincipal::alVerPuntajes);
+    connect(botonInstrucciones, &QPushButton::clicked, this, &MenuPrincipal::alVerInstrucciones);
+    connect(botonSalir, &QPushButton::clicked, this, &MenuPrincipal::alSalir);
+
+    layoutPanel->addWidget(etiquetaNombre);
+    layoutPanel->addWidget(entradaNombre_);
+    layoutPanel->addSpacing(8);
+    layoutPanel->addWidget(botonJugar);
+    layoutPanel->addWidget(botonPuntajes);
+    layoutPanel->addWidget(botonInstrucciones);
+    layoutPanel->addWidget(botonSalir);
+
+    layout->addStretch();
+    layout->addWidget(titulo);
+    layout->addWidget(subtitulo);
+    layout->addWidget(panel, 0, Qt::AlignHCenter);
+    layout->addStretch();
+
+    auto* pie = new QLabel("Usa Espacio / W / Flecha Arriba para ascender", central);
+    pie->setAlignment(Qt::AlignCenter);
+    pie->setStyleSheet("color: #7f95b3; font-size: 12px;");
+    layout->addWidget(pie);
+
+    setCentralWidget(central);
+
+    setStyleSheet(
+        "QMainWindow {"
+        "  background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+        "    stop:0 #0b1a2e, stop:0.55 #132842, stop:1 #1c3a57);"
+        "}"
+        "#panelMenu {"
+        "  background: rgba(8, 18, 32, 180);"
+        "  border: 1px solid #355578;"
+        "  border-radius: 14px;"
+        "  min-width: 360px;"
+        "}"
+        "QLineEdit {"
+        "  background: #0f2138;"
+        "  color: #e9f1fb;"
+        "  border: 1px solid #3d6085;"
+        "  border-radius: 8px;"
+        "  padding: 6px 10px;"
+        "  font-size: 14px;"
+        "}"
+        "QPushButton {"
+        "  background: #2f6fed;"
+        "  color: white;"
+        "  border: none;"
+        "  border-radius: 8px;"
+        "  padding: 12px 18px;"
+        "  font-size: 15px;"
+        "  font-weight: 600;"
+        "}"
+        "QPushButton:hover { background: #3d7fff; }"
+        "QPushButton:pressed { background: #2559c0; }"
+        "#botonSalir { background: #5b6b7c; }"
+        "#botonSalir:hover { background: #6d7f92; }");
+}
+
+QPushButton* MenuPrincipal::crearBotonMenu(const QString& texto)
+{
+    auto* boton = new QPushButton(texto, this);
+    boton->setCursor(Qt::PointingHandCursor);
+    boton->setMinimumHeight(42);
+    return boton;
+}
+
+void MenuPrincipal::alJugar()
+{
+    const QString nombre = entradaNombre_->text().trimmed();
+    if (nombre.isEmpty()) {
+        QMessageBox::warning(this, "Nombre requerido",
+                             "Escribe tu nombre de piloto antes de jugar.");
+        entradaNombre_->setFocus();
+        return;
+    }
+
+    if (ventanaJuego_) {
+        ventanaJuego_->raise();
+        ventanaJuego_->activateWindow();
+        return;
+    }
+
+    ventanaJuego_ = new NucleoFisico(nullptr);
+    ventanaJuego_->setAttribute(Qt::WA_DeleteOnClose);
+    ventanaJuego_->setWindowTitle("Helicopter Rescue - " + nombre);
+    ventanaJuego_->setFixedSize(900, 580);
+
+    connect(ventanaJuego_, &QObject::destroyed, this, &MenuPrincipal::alCerrarJuego);
+
+    hide();
+    ventanaJuego_->show();
+    ventanaJuego_->setFocus();
+}
+
+void MenuPrincipal::alVerPuntajes()
+{
+    if (!ventanaPuntajes_) {
+        ventanaPuntajes_ = new VentanaPuntajes(&gestorPuntajes_, this);
+        ventanaPuntajes_->setAttribute(Qt::WA_DeleteOnClose);
+    }
+
+    ventanaPuntajes_->recargar();
+    ventanaPuntajes_->show();
+    ventanaPuntajes_->raise();
+    ventanaPuntajes_->activateWindow();
+}
+
+void MenuPrincipal::alVerInstrucciones()
+{
+    QMessageBox::information(
+        this,
+        "Instrucciones",
+        "Objetivo:\n"
+        "Controla el helicoptero, evita obstaculos y rescata personas.\n\n"
+        "Controles:\n"
+        "- Flecha Arriba: ascender\n"
+        "- Suelta la tecla: la gravedad hace caer la aeronave\n\n"
+        "Hay 3 niveles de dificultad.\n"
+        );
+}
+
+void MenuPrincipal::alSalir()
+{
+    QApplication::quit();
+}
+
+void MenuPrincipal::alCerrarJuego()
+{
+    ventanaJuego_ = nullptr;
+    show();
+    raise();
+    activateWindow();
+}

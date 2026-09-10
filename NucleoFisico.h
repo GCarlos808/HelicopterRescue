@@ -10,6 +10,9 @@
 #include "GestorEntidades.h"
 #include "FondoScroll.h"
 
+class QCloseEvent;
+class QKeyEvent;
+
 class NucleoFisico : public QMainWindow {
     Q_OBJECT
 
@@ -20,6 +23,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     GestorEntidades *gestorEntidades;

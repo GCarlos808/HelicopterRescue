@@ -2,10 +2,6 @@ QT += widgets
 
 CONFIG += c++17
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 SOURCES += \
     Edificio.cpp \
     Entidad.cpp \
@@ -13,8 +9,11 @@ SOURCES += \
     GestorEntidades.cpp \
     Helicoptero.cpp \
     Inputs.cpp \
+    MenuPrincipal.cpp \
     MotorJuego.cpp \
     NucleoFisico.cpp \
+    ScoreManager.cpp \
+    VentanaPuntajes.cpp \
     main.cpp
 
 HEADERS += \
@@ -24,8 +23,13 @@ HEADERS += \
     GestorEntidades.h \
     Helicoptero.h \
     Inputs.h \
+    MenuPrincipal.h \
     MotorJuego.h \
-    NucleoFisico.h
+    NucleoFisico.h \
+    SavedGame.h \
+    ScoreEntry.h \
+    ScoreManager.h \
+    VentanaPuntajes.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

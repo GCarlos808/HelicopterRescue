@@ -1,4 +1,5 @@
 #include "NucleoFisico.h"
+#include <QCloseEvent>
 #include <QKeyEvent>
 
 NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
@@ -53,4 +54,11 @@ void NucleoFisico::keyPressEvent(QKeyEvent *event) {
 
 void NucleoFisico::keyReleaseEvent(QKeyEvent *event) {
     inputManager->procesarLiberacion(event->key());
+}
+
+void NucleoFisico::closeEvent(QCloseEvent *event) {
+    if (motorJuego) {
+        motorJuego->detener();
+    }
+    QMainWindow::closeEvent(event);
 }

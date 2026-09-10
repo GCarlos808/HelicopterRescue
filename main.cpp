@@ -1,12 +1,14 @@
-#include "NucleoFisico.h"
+#include "MenuPrincipal.h"
 #include <QApplication>
 
-int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
+int main(int argc, char* argv[])
+{
+    QApplication app(argc, argv);
+    QApplication::setApplicationName("HelicopterRescue");
+    QApplication::setApplicationDisplayName("Helicopter Rescue");
 
-    NucleoFisico ventana;
-    ventana.setFixedSize(900, 580);
-    ventana.show();
+    MenuPrincipal menu;
+    menu.show();
 
     return QApplication::exec();
 }
