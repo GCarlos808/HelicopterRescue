@@ -39,7 +39,7 @@ void MenuPrincipal::crearInterfaz()
         "font-size: 42px; font-weight: 800; color: #f4f7fb;"
         "letter-spacing: 2px;");
 
-    auto* subtitulo = new QLabel("Mision de rescate aereo", central);
+    auto* subtitulo = new QLabel("Misión de rescate aereo", central);
     subtitulo->setAlignment(Qt::AlignCenter);
     subtitulo->setStyleSheet("font-size: 16px; color: #9eb6d4; margin-bottom: 10px;");
 
@@ -81,11 +81,6 @@ void MenuPrincipal::crearInterfaz()
     layout->addWidget(subtitulo);
     layout->addWidget(panel, 0, Qt::AlignHCenter);
     layout->addStretch();
-
-    auto* pie = new QLabel("Usa Espacio / W / Flecha Arriba para ascender", central);
-    pie->setAlignment(Qt::AlignCenter);
-    pie->setStyleSheet("color: #7f95b3; font-size: 12px;");
-    layout->addWidget(pie);
 
     setCentralWidget(central);
 
