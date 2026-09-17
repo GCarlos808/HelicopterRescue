@@ -21,24 +21,13 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
     });
 
     connect(helicoptero, &Helicoptero::destruido, this, [this]() {
-        motorJuego->detener(); // futuro Game Over
-    });
-
-    fondo = new FondoScroll(escena, 900, 580);
-
-
-    gestorEntidades = new GestorEntidades(escena, helicoptero, 900, 580);
-
-    connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
-        if (accion == InputManager::Accion::Ascender) {
-            helicoptero->setAscenso(activa);
-        } else if (accion == InputManager::Accion::Izquierda) {
-            helicoptero->setMoverIzquierda(activa);
-        } else if (accion == InputManager::Accion::Derecha) {
-            helicoptero->setMoverDerecha(activa);
+        if (motorJuego) {
+            motorJuego->detener();
         }
     });
 
+    fondo = new FondoScroll(escena, 900, 580);
+    gestorEntidades = new GestorEntidades(escena, helicoptero, 900, 580);
     inputManager = new InputManager(this);
 
     vista = new QGraphicsView(escena, this);
@@ -56,18 +45,13 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
     connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
         if (accion == InputManager::Accion::Ascender) {
             helicoptero->setAscenso(activa);
-        }
-    });
-
-    connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
-        if (accion == InputManager::Accion::Ascender) {
-            helicoptero->setAscenso(activa);
         } else if (accion == InputManager::Accion::Izquierda) {
             helicoptero->setMoverIzquierda(activa);
         } else if (accion == InputManager::Accion::Derecha) {
             helicoptero->setMoverDerecha(activa);
         } else if (accion == InputManager::Accion::Disparar && activa) {
-            QPointF origenDisparo = helicoptero->pos() + QPointF(helicoptero->pixmap().width(), helicoptero->pixmap().height() / 2.0);
+            QPointF origenDisparo = helicoptero->pos()
+                + QPointF(helicoptero->pixmap().width(), helicoptero->pixmap().height() / 2.0);
             gestorEntidades->dispararMisil(origenDisparo);
         }
     });
@@ -80,33 +64,44 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
         gestorEntidades->intentarGenerar(deltaTime);
         gestorEntidades->resolverImpactosMisiles();
 
-        Entidad *civilCerca = gestorEntidades->civilCercano(helicoptero, 40.0); //rango de rescate
+        Entidad *civilCerca = gestorEntidades->civilCercano(helicoptero, 40.0);
         if (civilCerca) {
             gestorEntidades->rescatar(civilCerca);
-            // incrementar numero de rescatados
         }
 
         Entidad *peligro = gestorEntidades->colisionPeligro(helicoptero);
         if (peligro) {
             helicoptero->recibirDano(1);
             if (peligro->tipo() == TipoEntidad::Enemigo) {
-                gestorEntidades->eliminarEntidad(peligro); //se destruye al chocar (kamikaze)
+                gestorEntidades->eliminarEntidad(peligro);
             }
-            //obstaculo solido
         }
     });
 
     motorJuego->iniciar();
 }
 
-NucleoFisico::~NucleoFisico() = default;
+NucleoFisico::~NucleoFisico() {
+    if (motorJuego) {
+        motorJuego->detener();
+    }
+    // Liberar entidades antes de que la escena destruya los QGraphicsItem.
+    delete gestorEntidades;
+    gestorEntidades = nullptr;
+    delete fondo;
+    fondo = nullptr;
+}
 
 void NucleoFisico::keyPressEvent(QKeyEvent *event) {
-    inputManager->procesarPresion(event->key());
+    if (inputManager) {
+        inputManager->procesarPresion(event->key());
+    }
 }
 
 void NucleoFisico::keyReleaseEvent(QKeyEvent *event) {
-    inputManager->procesarLiberacion(event->key());
+    if (inputManager) {
+        inputManager->procesarLiberacion(event->key());
+    }
 }
 
 void NucleoFisico::closeEvent(QCloseEvent *event) {
@@ -115,4 +110,3 @@ void NucleoFisico::closeEvent(QCloseEvent *event) {
     }
     QMainWindow::closeEvent(event);
 }
-

@@ -3,9 +3,10 @@
 #include "Edificio.h"
 #include "Civil.h"
 #include "Drone.h"
-#include <QRandomGenerator>
-#include <QLineF>
 #include "Misil.h"
+#include <QLineF>
+#include <QRandomGenerator>
+#include <algorithm>
 
 GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helicopteroJugador, qreal ancho, qreal alto)
     : entidades(nullptr), cantidad(0), capacidad(4)
@@ -14,16 +15,31 @@ GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helic
     , tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0)
 {
     entidades = new Entidad*[capacidad];
+    for (int i = 0; i < capacidad; ++i) {
+        entidades[i] = nullptr;
+    }
 }
 
 GestorEntidades::~GestorEntidades() {
     for (int i = 0; i < cantidad; ++i) {
+        if (!entidades[i]) {
+            continue;
+        }
+        if (escena && entidades[i]->scene() == escena) {
+            escena->removeItem(entidades[i]);
+        }
         delete entidades[i];
+        entidades[i] = nullptr;
     }
     delete[] entidades;
+    entidades = nullptr;
+    cantidad = 0;
 }
 
 void GestorEntidades::agregar(Entidad *nueva) {
+    if (!nueva) {
+        return;
+    }
     if (cantidad >= capacidad) {
         redimensionar();
     }
@@ -37,48 +53,86 @@ void GestorEntidades::redimensionar() {
     for (int i = 0; i < cantidad; ++i) {
         nuevoArreglo[i] = entidades[i];
     }
+    for (int i = cantidad; i < nuevaCapacidad; ++i) {
+        nuevoArreglo[i] = nullptr;
+    }
     delete[] entidades;
     entidades = nuevoArreglo;
     capacidad = nuevaCapacidad;
 }
 
+void GestorEntidades::quitarDeArreglo(int indice) {
+    if (indice < 0 || indice >= cantidad) {
+        return;
+    }
+    for (int j = indice; j < cantidad - 1; ++j) {
+        entidades[j] = entidades[j + 1];
+    }
+    entidades[cantidad - 1] = nullptr;
+    cantidad--;
+}
+
 void GestorEntidades::liberarSalientes() {
     int escritura = 0;
     for (int lectura = 0; lectura < cantidad; ++lectura) {
-        if (entidades[lectura]->haSalidoDePantalla(0.0)) {
-            escena->removeItem(entidades[lectura]);
-            delete entidades[lectura];
+        Entidad *entidad = entidades[lectura];
+        if (!entidad) {
+            continue;
+        }
+        if (entidad->haSalidoDePantalla(0.0)) {
+            if (escena && entidad->scene() == escena) {
+                escena->removeItem(entidad);
+            }
+            delete entidad;
         } else {
-            entidades[escritura] = entidades[lectura];
+            entidades[escritura] = entidad;
             escritura++;
         }
+    }
+    for (int i = escritura; i < cantidad; ++i) {
+        entidades[i] = nullptr;
     }
     cantidad = escritura;
 }
 
 void GestorEntidades::actualizar(qreal deltaTime) {
     for (int i = 0; i < cantidad; ++i) {
-        entidades[i]->actualizar(deltaTime);
+        if (entidades[i]) {
+            entidades[i]->actualizar(deltaTime);
+        }
     }
     liberarSalientes();
 }
 
 void GestorEntidades::generarEdificio() {
+    if (!escena) {
+        return;
+    }
+
     Edificio *nuevo = new Edificio();
     qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150);
-    nuevo->setPixmap(nuevo->pixmap().scaled(80, alturaAleatoria, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    nuevo->setPixmap(nuevo->pixmap().scaled(80, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     nuevo->setPos(anchoEscena, altoEscena - alturaAleatoria);
     escena->addItem(nuevo);
     agregar(nuevo);
 }
 
 void GestorEntidades::generarCivil() {
+    if (!escena) {
+        return;
+    }
+
     Civil *nuevo = new Civil();
 
     qreal margenSuperior = 100.0;
     qreal margenInferior = 20.0;
-    qreal rangoDisponible = altoEscena - nuevo->pixmap().height() - margenSuperior - margenInferior;
-    qreal posY = margenSuperior + QRandomGenerator::global()->bounded(int(rangoDisponible));
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    qreal rangoDisponible = altoEscena - altoSprite - margenSuperior - margenInferior;
+
+    qreal posY = margenSuperior;
+    if (rangoDisponible > 1.0) {
+        posY = margenSuperior + QRandomGenerator::global()->bounded(int(rangoDisponible));
+    }
 
     nuevo->setPos(anchoEscena, posY);
     escena->addItem(nuevo);
@@ -86,16 +140,28 @@ void GestorEntidades::generarCivil() {
 }
 
 void GestorEntidades::generarDrone() {
+    if (!escena || !helicoptero) {
+        return;
+    }
+
     Drone *nuevo = new Drone(helicoptero);
-    qreal alturaAleatoria = QRandomGenerator::global()->bounded(int(altoEscena) - 100);
-    nuevo->setPos(anchoEscena, alturaAleatoria);
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    int rangoY = int(altoEscena - altoSprite - 20.0);
+    qreal posY = 20.0;
+    if (rangoY > 1) {
+        posY = QRandomGenerator::global()->bounded(rangoY);
+    }
+
+    nuevo->setPos(anchoEscena, posY);
     escena->addItem(nuevo);
     agregar(nuevo);
 }
 
 void GestorEntidades::intentarGenerar(qreal deltaTime) {
     tiempoDesdeUltimoSpawn += deltaTime;
-    if (tiempoDesdeUltimoSpawn < intervaloSpawn) return;
+    if (tiempoDesdeUltimoSpawn < intervaloSpawn) {
+        return;
+    }
     tiempoDesdeUltimoSpawn = 0.0;
 
     int eleccion = QRandomGenerator::global()->bounded(3); // 0, 1 o 2
@@ -107,55 +173,77 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
 }
 
 Entidad *GestorEntidades::civilCercano(QGraphicsItem *objetivo, qreal radio) const {
+    if (!objetivo) {
+        return nullptr;
+    }
+
     QPointF centroObjetivo = objetivo->sceneBoundingRect().center();
 
     for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i]->tipo() != TipoEntidad::Civil) continue;
+        if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Civil) {
+            continue;
+        }
 
         QPointF centroCivil = entidades[i]->sceneBoundingRect().center();
         qreal distancia = QLineF(centroObjetivo, centroCivil).length();
-        if (distancia <= radio) return entidades[i];
+        if (distancia <= radio) {
+            return entidades[i];
+        }
     }
     return nullptr;
 }
 
 void GestorEntidades::rescatar(Entidad *civil) {
-    for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i] == civil) {
-            escena->removeItem(entidades[i]);
-            delete entidades[i];
-            for (int j = i; j < cantidad - 1; ++j) {
-                entidades[j] = entidades[j + 1];
-            }
-            cantidad--;
-            return;
-        }
+    if (!civil) {
+        return;
     }
+    eliminarEntidad(civil);
 }
+
 Entidad *GestorEntidades::colisionPeligro(QGraphicsItem *objetivo) const {
+    if (!objetivo) {
+        return nullptr;
+    }
+
     for (int i = 0; i < cantidad; ++i) {
+        if (!entidades[i]) {
+            continue;
+        }
         TipoEntidad t = entidades[i]->tipo();
-        if (t != TipoEntidad::Obstaculo && t != TipoEntidad::Enemigo) continue;
-        if (objetivo->collidesWithItem(entidades[i])) return entidades[i];
+        if (t != TipoEntidad::Obstaculo && t != TipoEntidad::Enemigo) {
+            continue;
+        }
+        if (objetivo->collidesWithItem(entidades[i])) {
+            return entidades[i];
+        }
     }
     return nullptr;
 }
 
 void GestorEntidades::eliminarEntidad(Entidad *entidad) {
+    if (!entidad) {
+        return;
+    }
+
     for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i] == entidad) {
-            escena->removeItem(entidades[i]);
-            delete entidades[i];
-            for (int j = i; j < cantidad - 1; ++j) {
-                entidades[j] = entidades[j + 1];
-            }
-            cantidad--;
-            return;
+        if (entidades[i] != entidad) {
+            continue;
         }
+
+        if (escena && entidades[i]->scene() == escena) {
+            escena->removeItem(entidades[i]);
+        }
+        delete entidades[i];
+        quitarDeArreglo(i);
+        return;
     }
 }
 
 void GestorEntidades::dispararMisil(QPointF origen) {
+    if (!escena) {
+        return;
+    }
+
     Misil *nuevo = new Misil(anchoEscena);
     nuevo->setPos(origen);
     escena->addItem(nuevo);
@@ -164,26 +252,31 @@ void GestorEntidades::dispararMisil(QPointF origen) {
 
 void GestorEntidades::resolverImpactosMisiles() {
     for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i]->tipo() != TipoEntidad::Misil) continue;
+        if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Misil) {
+            continue;
+        }
 
         for (int j = 0; j < cantidad; ++j) {
-            if (entidades[j]->tipo() != TipoEntidad::Enemigo) continue;
-
-            if (entidades[i]->collidesWithItem(entidades[j])) {
-                Entidad *drone = entidades[j];
-                Entidad *misil = entidades[i];
-
-                //se elimina primero el elemento con mayor índice
-                if (j > i) {
-                    eliminarEntidad(drone);
-                    eliminarEntidad(misil);
-                } else {
-                    eliminarEntidad(misil);
-                    eliminarEntidad(drone);
-                }
-
-                return; //salir inmediatamente
+            if (!entidades[j] || entidades[j]->tipo() != TipoEntidad::Enemigo) {
+                continue;
             }
+
+            if (!entidades[i]->collidesWithItem(entidades[j])) {
+                continue;
+            }
+
+            Entidad *drone = entidades[j];
+            Entidad *misil = entidades[i];
+
+            // Eliminar primero el índice mayor para no invalidar el menor.
+            if (j > i) {
+                eliminarEntidad(drone);
+                eliminarEntidad(misil);
+            } else {
+                eliminarEntidad(misil);
+                eliminarEntidad(drone);
+            }
+            return;
         }
     }
 }

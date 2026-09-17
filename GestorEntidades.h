@@ -1,7 +1,9 @@
 #ifndef GESTORENTIDADES_H
 #define GESTORENTIDADES_H
 
+#include <QGraphicsItem>
 #include <QGraphicsScene>
+#include <QPointF>
 
 class Entidad;
 class Helicoptero;
@@ -28,6 +30,7 @@ private:
     void generarEdificio();
     void generarCivil();
     void generarDrone();
+    void quitarDeArreglo(int indice);
 
     Entidad **entidades;
     int cantidad;

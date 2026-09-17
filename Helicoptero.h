@@ -32,6 +32,7 @@ private:
     bool derechaActiva;
 
     int vida;
+    qreal tiempoInvulnerable;
     static const int VIDA_MAXIMA = 3;
 
 signals:

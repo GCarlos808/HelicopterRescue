@@ -12,6 +12,7 @@ Helicoptero::Helicoptero(QGraphicsItem *parent)
     , izquierdaActiva(false)
     , derechaActiva(false)
     , vida(VIDA_MAXIMA)
+    , tiempoInvulnerable(0.0)
 {
     QPixmap sprite(":/assets/chopper1_1.png");
     setPixmap(sprite.scaled(110, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -26,6 +27,13 @@ void Helicoptero::setMoverIzquierda(bool activo) { izquierdaActiva = activo; }
 void Helicoptero::setMoverDerecha(bool activo) { derechaActiva = activo; }
 
 void Helicoptero::actualizarFisica(qreal deltaTime) {
+    if (tiempoInvulnerable > 0.0) {
+        tiempoInvulnerable -= deltaTime;
+        if (tiempoInvulnerable < 0.0) {
+            tiempoInvulnerable = 0.0;
+        }
+    }
+
     // fisica vertical
     const qreal empuje = 900.0;
     qreal aceleracionNeta = gravedad;
@@ -60,8 +68,14 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
 }
 
 void Helicoptero::recibirDano(int cantidad) {
+    if (cantidad <= 0 || vida <= 0 || tiempoInvulnerable > 0.0) {
+        return;
+    }
+
     vida -= cantidad;
     if (vida < 0) vida = 0;
+
+    tiempoInvulnerable = 1.0; // 1s sin recibir daño seguido
 
     emit vidaCambiada(vida, VIDA_MAXIMA);
 
