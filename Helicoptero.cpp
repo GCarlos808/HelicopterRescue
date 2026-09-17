@@ -1,6 +1,5 @@
-// Helicoptero.cpp
 #include "Helicoptero.h"
-#include <algorithm> // std::clamp
+#include <algorithm>
 
 Helicoptero::Helicoptero(QGraphicsItem *parent)
     : QObject(nullptr)
@@ -26,7 +25,7 @@ void Helicoptero::setMoverIzquierda(bool activo) { izquierdaActiva = activo; }
 void Helicoptero::setMoverDerecha(bool activo) { derechaActiva = activo; }
 
 void Helicoptero::actualizarFisica(qreal deltaTime) {
-    // fisica vertical (gravedad)
+    // fisica vertical
     const qreal empuje = 900.0;
     qreal aceleracionNeta = gravedad;
     if (ascensoActivo) aceleracionNeta -= empuje;
@@ -37,13 +36,12 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
     if (y() < 0) { setY(0); velocidadVertical = 0; }
     if (y() > 480) { setY(480); velocidadVertical = 0; }
 
-    // movimiento horizontal
+    // mov horizontal
     qreal desplazamientoX = 0.0;
     if (derechaActiva) desplazamientoX += velocidadHorizontal;
     if (izquierdaActiva) desplazamientoX -= velocidadHorizontal;
     setX(x() + desplazamientoX * deltaTime);
 
-    // inclinacion
     const qreal anguloMaximo = 15.0;
     const qreal velocidadRotacion = 90.0;
 

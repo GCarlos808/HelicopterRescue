@@ -1,4 +1,5 @@
 #include "NucleoFisico.h"
+#include "Entidad.h"
 #include <QCloseEvent>
 #include <QKeyEvent>
 
@@ -10,7 +11,18 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
     escena->addItem(helicoptero);
 
     fondo = new FondoScroll(escena, 900, 580);
-    gestorEntidades = new GestorEntidades(escena, 900, 580);
+
+    gestorEntidades = new GestorEntidades(escena, helicoptero, 900, 580);
+
+    connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
+        if (accion == InputManager::Accion::Ascender) {
+            helicoptero->setAscenso(activa);
+        } else if (accion == InputManager::Accion::Izquierda) {
+            helicoptero->setMoverIzquierda(activa);
+        } else if (accion == InputManager::Accion::Derecha) {
+            helicoptero->setMoverDerecha(activa);
+        }
+    });
 
     inputManager = new InputManager(this);
 
@@ -39,7 +51,14 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
         gestorEntidades->actualizar(deltaTime);
         gestorEntidades->intentarGenerar(deltaTime);
 
-        if (gestorEntidades->hayColisionCon(helicoptero)) {
+        Entidad *colisionado = gestorEntidades->colisionCon(helicoptero);
+        if (colisionado) {
+            if (colisionado->tipo() == TipoEntidad::Civil) {
+                gestorEntidades->rescatar(colisionado);
+                // incrementar rescatados
+            } else {
+                // restar salud
+            }
         }
     });
 

@@ -3,6 +3,8 @@ QT += widgets
 CONFIG += c++17
 
 SOURCES += \
+    Civil.cpp \
+    Drone.cpp \
     Edificio.cpp \
     Entidad.cpp \
     FondoScroll.cpp \
@@ -17,6 +19,8 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    Civil.h \
+    Drone.h \
     Edificio.h \
     Entidad.h \
     FondoScroll.h \

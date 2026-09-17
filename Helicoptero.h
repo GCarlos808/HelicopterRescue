@@ -1,4 +1,3 @@
-// Helicoptero.h
 #ifndef HELICOPTERO_H
 #define HELICOPTERO_H
 
@@ -22,7 +21,6 @@ private:
     qreal velocidadVertical;
     qreal gravedad;
     qreal anguloInclinacion;
-
     bool ascensoActivo;
 
     qreal velocidadHorizontal;

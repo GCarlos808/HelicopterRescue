@@ -52,33 +52,47 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../../Edificio.cpp \
+SOURCES       = ../../Civil.cpp \
+		../../Drone.cpp \
+		../../Edificio.cpp \
 		../../Entidad.cpp \
 		../../FondoScroll.cpp \
 		../../GestorEntidades.cpp \
 		../../Helicoptero.cpp \
 		../../Inputs.cpp \
+		../../MenuPrincipal.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
+		../../ScoreManager.cpp \
+		../../VentanaPuntajes.cpp \
 		../../main.cpp qrc_resources.cpp \
 		moc_Helicoptero.cpp \
 		moc_Inputs.cpp \
+		moc_MenuPrincipal.cpp \
 		moc_MotorJuego.cpp \
-		moc_NucleoFisico.cpp
-OBJECTS       = Edificio.o \
+		moc_NucleoFisico.cpp \
+		moc_VentanaPuntajes.cpp
+OBJECTS       = Civil.o \
+		Drone.o \
+		Edificio.o \
 		Entidad.o \
 		FondoScroll.o \
 		GestorEntidades.o \
 		Helicoptero.o \
 		Inputs.o \
+		MenuPrincipal.o \
 		MotorJuego.o \
 		NucleoFisico.o \
+		ScoreManager.o \
+		VentanaPuntajes.o \
 		main.o \
 		qrc_resources.o \
 		moc_Helicoptero.o \
 		moc_Inputs.o \
+		moc_MenuPrincipal.o \
 		moc_MotorJuego.o \
-		moc_NucleoFisico.o
+		moc_NucleoFisico.o \
+		moc_VentanaPuntajes.o
 DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt6/mkspecs/common/unix.conf \
 		/usr/lib/qt6/mkspecs/common/linux.conf \
@@ -357,21 +371,33 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt6/mkspecs/features/exceptions.prf \
 		/usr/lib/qt6/mkspecs/features/yacc.prf \
 		/usr/lib/qt6/mkspecs/features/lex.prf \
-		../../../../HelicopterRescue.pro ../../Edificio.h \
+		../../../../HelicopterRescue.pro ../../Civil.h \
+		../../Drone.h \
+		../../Edificio.h \
 		../../Entidad.h \
 		../../FondoScroll.h \
 		../../GestorEntidades.h \
 		../../Helicoptero.h \
 		../../Inputs.h \
+		../../MenuPrincipal.h \
 		../../MotorJuego.h \
-		../../NucleoFisico.h ../../Edificio.cpp \
+		../../NucleoFisico.h \
+		../../SavedGame.h \
+		../../ScoreEntry.h \
+		../../ScoreManager.h \
+		../../VentanaPuntajes.h ../../Civil.cpp \
+		../../Drone.cpp \
+		../../Edificio.cpp \
 		../../Entidad.cpp \
 		../../FondoScroll.cpp \
 		../../GestorEntidades.cpp \
 		../../Helicoptero.cpp \
 		../../Inputs.cpp \
+		../../MenuPrincipal.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
+		../../ScoreManager.cpp \
+		../../VentanaPuntajes.cpp \
 		../../main.cpp
 QMAKE_TARGET  = HelicopterRescue
 DESTDIR       = 
@@ -967,8 +993,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MotorJuego.h ../../NucleoFisico.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../VentanaPuntajes.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1037,9 +1063,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt6/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/qt6/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_Helicoptero.cpp moc_Inputs.cpp moc_MotorJuego.cpp moc_NucleoFisico.cpp
+compiler_moc_header_make_all: moc_Helicoptero.cpp moc_Inputs.cpp moc_MenuPrincipal.cpp moc_MotorJuego.cpp moc_NucleoFisico.cpp moc_VentanaPuntajes.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_Helicoptero.cpp moc_Inputs.cpp moc_MotorJuego.cpp moc_NucleoFisico.cpp
+	-$(DEL_FILE) moc_Helicoptero.cpp moc_Inputs.cpp moc_MenuPrincipal.cpp moc_MotorJuego.cpp moc_NucleoFisico.cpp moc_VentanaPuntajes.cpp
 moc_Helicoptero.cpp: ../../Helicoptero.h \
 		moc_predefs.h \
 		/usr/lib/qt6/moc
@@ -1049,6 +1075,14 @@ moc_Inputs.cpp: ../../Inputs.h \
 		moc_predefs.h \
 		/usr/lib/qt6/moc
 	/usr/lib/qt6/moc $(DEFINES) --include /home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue/build/Desktop_Debug/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/16 -I/usr/include/c++/16/x86_64-pc-linux-gnu -I/usr/include/c++/16/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/16/include -I/usr/local/include -I/usr/include ../../Inputs.h -o moc_Inputs.cpp
+
+moc_MenuPrincipal.cpp: ../../MenuPrincipal.h \
+		../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h \
+		moc_predefs.h \
+		/usr/lib/qt6/moc
+	/usr/lib/qt6/moc $(DEFINES) --include /home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue/build/Desktop_Debug/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/16 -I/usr/include/c++/16/x86_64-pc-linux-gnu -I/usr/include/c++/16/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/16/include -I/usr/local/include -I/usr/include ../../MenuPrincipal.h -o moc_MenuPrincipal.cpp
 
 moc_MotorJuego.cpp: ../../MotorJuego.h \
 		moc_predefs.h \
@@ -1064,6 +1098,14 @@ moc_NucleoFisico.cpp: ../../NucleoFisico.h \
 		moc_predefs.h \
 		/usr/lib/qt6/moc
 	/usr/lib/qt6/moc $(DEFINES) --include /home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue/build/Desktop_Debug/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/16 -I/usr/include/c++/16/x86_64-pc-linux-gnu -I/usr/include/c++/16/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/16/include -I/usr/local/include -I/usr/include ../../NucleoFisico.h -o moc_NucleoFisico.cpp
+
+moc_VentanaPuntajes.cpp: ../../VentanaPuntajes.h \
+		../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h \
+		moc_predefs.h \
+		/usr/lib/qt6/moc
+	/usr/lib/qt6/moc $(DEFINES) --include /home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue/build/Desktop_Debug/moc_predefs.h -I/usr/lib/qt6/mkspecs/linux-g++ -I/home/carlosg60/Documents/ProgramacionIII/QTCreator/HelicopterRescue -I/usr/include/qt6 -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I. -I/usr/include/c++/16 -I/usr/include/c++/16/x86_64-pc-linux-gnu -I/usr/include/c++/16/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/16/include -I/usr/local/include -I/usr/include ../../VentanaPuntajes.h -o moc_VentanaPuntajes.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1081,6 +1123,15 @@ compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_heade
 
 ####### Compile
 
+Civil.o: ../../Civil.cpp ../../Civil.h \
+		../../Entidad.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Civil.o ../../Civil.cpp
+
+Drone.o: ../../Drone.cpp ../../Drone.h \
+		../../Entidad.h \
+		../../Helicoptero.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Drone.o ../../Drone.cpp
+
 Edificio.o: ../../Edificio.cpp ../../Edificio.h \
 		../../Entidad.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Edificio.o ../../Edificio.cpp
@@ -1093,7 +1144,9 @@ FondoScroll.o: ../../FondoScroll.cpp ../../FondoScroll.h
 
 GestorEntidades.o: ../../GestorEntidades.cpp ../../GestorEntidades.h \
 		../../Entidad.h \
-		../../Edificio.h
+		../../Edificio.h \
+		../../Civil.h \
+		../../Drone.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GestorEntidades.o ../../GestorEntidades.cpp
 
 Helicoptero.o: ../../Helicoptero.cpp ../../Helicoptero.h
@@ -1101,6 +1154,19 @@ Helicoptero.o: ../../Helicoptero.cpp ../../Helicoptero.h
 
 Inputs.o: ../../Inputs.cpp ../../Inputs.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Inputs.o ../../Inputs.cpp
+
+MenuPrincipal.o: ../../MenuPrincipal.cpp ../../MenuPrincipal.h \
+		../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h \
+		../../NucleoFisico.h \
+		../../Helicoptero.h \
+		../../Inputs.h \
+		../../MotorJuego.h \
+		../../GestorEntidades.h \
+		../../FondoScroll.h \
+		../../VentanaPuntajes.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MenuPrincipal.o ../../MenuPrincipal.cpp
 
 MotorJuego.o: ../../MotorJuego.cpp ../../MotorJuego.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MotorJuego.o ../../MotorJuego.cpp
@@ -1110,15 +1176,25 @@ NucleoFisico.o: ../../NucleoFisico.cpp ../../NucleoFisico.h \
 		../../Inputs.h \
 		../../MotorJuego.h \
 		../../GestorEntidades.h \
-		../../FondoScroll.h
+		../../FondoScroll.h \
+		../../Entidad.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o NucleoFisico.o ../../NucleoFisico.cpp
 
-main.o: ../../main.cpp ../../NucleoFisico.h \
-		../../Helicoptero.h \
-		../../Inputs.h \
-		../../MotorJuego.h \
-		../../GestorEntidades.h \
-		../../FondoScroll.h
+ScoreManager.o: ../../ScoreManager.cpp ../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ScoreManager.o ../../ScoreManager.cpp
+
+VentanaPuntajes.o: ../../VentanaPuntajes.cpp ../../VentanaPuntajes.h \
+		../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o VentanaPuntajes.o ../../VentanaPuntajes.cpp
+
+main.o: ../../main.cpp ../../MenuPrincipal.h \
+		../../ScoreManager.h \
+		../../ScoreEntry.h \
+		../../SavedGame.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
 
 qrc_resources.o: qrc_resources.cpp 
@@ -1130,11 +1206,17 @@ moc_Helicoptero.o: moc_Helicoptero.cpp
 moc_Inputs.o: moc_Inputs.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Inputs.o moc_Inputs.cpp
 
+moc_MenuPrincipal.o: moc_MenuPrincipal.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MenuPrincipal.o moc_MenuPrincipal.cpp
+
 moc_MotorJuego.o: moc_MotorJuego.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_MotorJuego.o moc_MotorJuego.cpp
 
 moc_NucleoFisico.o: moc_NucleoFisico.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_NucleoFisico.o moc_NucleoFisico.cpp
+
+moc_VentanaPuntajes.o: moc_VentanaPuntajes.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_VentanaPuntajes.o moc_VentanaPuntajes.cpp
 
 ####### Install
 

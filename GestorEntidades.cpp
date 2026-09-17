@@ -1,18 +1,24 @@
 #include "GestorEntidades.h"
 #include "Entidad.h"
 #include "Edificio.h"
+#include "Civil.h"
+#include "Drone.h"
 #include <QRandomGenerator>
 
-GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, qreal ancho, qreal alto) : entidades(nullptr), cantidad(0), capacidad(4), escena(escenaJuego)
-                                                            , anchoEscena(ancho), altoEscena(alto), tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0){
+GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helicopteroJugador, qreal ancho, qreal alto)
+    : entidades(nullptr), cantidad(0), capacidad(4)
+    , escena(escenaJuego), helicoptero(helicopteroJugador)
+    , anchoEscena(ancho), altoEscena(alto)
+    , tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0)
+{
     entidades = new Entidad*[capacidad];
 }
 
 GestorEntidades::~GestorEntidades() {
     for (int i = 0; i < cantidad; ++i) {
-        delete entidades[i]; // libera cada objeto individual
+        delete entidades[i];
     }
-    delete[] entidades; // libera el arreglo
+    delete[] entidades;
 }
 
 void GestorEntidades::agregar(Entidad *nueva) {
@@ -26,12 +32,10 @@ void GestorEntidades::agregar(Entidad *nueva) {
 void GestorEntidades::redimensionar() {
     int nuevaCapacidad = capacidad * 2;
     Entidad **nuevoArreglo = new Entidad*[nuevaCapacidad];
-
     for (int i = 0; i < cantidad; ++i) {
-        nuevoArreglo[i] = entidades[i]; // se copian los punteros, no los objetos
+        nuevoArreglo[i] = entidades[i];
     }
-
-    delete[] entidades; // solo libera el arreglo viejo
+    delete[] entidades;
     entidades = nuevoArreglo;
     capacidad = nuevaCapacidad;
 }
@@ -57,26 +61,62 @@ void GestorEntidades::actualizar(qreal deltaTime) {
     liberarSalientes();
 }
 
+void GestorEntidades::generarEdificio() {
+    Edificio *nuevo = new Edificio();
+    qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150);
+    nuevo->setPixmap(nuevo->pixmap().scaled(80, alturaAleatoria, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    nuevo->setPos(anchoEscena, altoEscena - alturaAleatoria);
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
+void GestorEntidades::generarCivil() {
+    Civil *nuevo = new Civil();
+    nuevo->setPos(anchoEscena, altoEscena - nuevo->pixmap().height());
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
+void GestorEntidades::generarDrone() {
+    Drone *nuevo = new Drone(helicoptero);
+    qreal alturaAleatoria = QRandomGenerator::global()->bounded(int(altoEscena) - 100);
+    nuevo->setPos(anchoEscena, alturaAleatoria);
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
 void GestorEntidades::intentarGenerar(qreal deltaTime) {
     tiempoDesdeUltimoSpawn += deltaTime;
     if (tiempoDesdeUltimoSpawn < intervaloSpawn) return;
     tiempoDesdeUltimoSpawn = 0.0;
 
-    Edificio *nuevoEdificio = new Edificio();
-
-    qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150); // 100 a 250 pixeles
-    nuevoEdificio->setPixmap(nuevoEdificio->pixmap().scaled(80, alturaAleatoria, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
-    nuevoEdificio->setPos(anchoEscena, altoEscena - alturaAleatoria);
-
-    escena->addItem(nuevoEdificio);
-    agregar(nuevoEdificio);
+    int eleccion = QRandomGenerator::global()->bounded(3); // 0, 1 o 2
+    switch (eleccion) {
+    case 0: generarEdificio(); break;
+    case 1: generarCivil(); break;
+    case 2: generarDrone(); break;
+    }
 }
 
-bool GestorEntidades::hayColisionCon(QGraphicsItem *objetivo) const {
+Entidad *GestorEntidades::colisionCon(QGraphicsItem *objetivo) const {
     for (int i = 0; i < cantidad; ++i) {
         if (objetivo->collidesWithItem(entidades[i])) {
-            return true;
+            return entidades[i];
         }
     }
-    return false;
+    return nullptr;
+}
+
+void GestorEntidades::rescatar(Entidad *civil) {
+    for (int i = 0; i < cantidad; ++i) {
+        if (entidades[i] == civil) {
+            escena->removeItem(entidades[i]);
+            delete entidades[i];
+            for (int j = i; j < cantidad - 1; ++j) {
+                entidades[j] = entidades[j + 1];
+            }
+            cantidad--;
+            return;
+        }
+    }
 }

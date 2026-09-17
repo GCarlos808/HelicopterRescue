@@ -6,6 +6,7 @@
 class Edificio : public Entidad {
 public:
     explicit Edificio(QGraphicsItem *parent = nullptr);
+    TipoEntidad tipo() const override;
 };
 
 #endif // EDIFICIO_H
