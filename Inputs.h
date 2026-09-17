@@ -11,7 +11,8 @@ public:
     enum class Accion {
         Ascender,
         Izquierda,
-        Derecha
+        Derecha,
+        Disparar
     };
 
     explicit InputManager(QObject *parent = nullptr);

@@ -10,7 +10,22 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
     helicoptero = new Helicoptero();
     escena->addItem(helicoptero);
 
+    fondoBarraVida = escena->addRect(20, 20, 200, 20, QPen(Qt::black), QBrush(Qt::darkGray));
+    barraVida = escena->addRect(20, 20, 200, 20, QPen(Qt::NoPen), QBrush(Qt::green));
+    fondoBarraVida->setZValue(10);
+    barraVida->setZValue(11);
+
+    connect(helicoptero, &Helicoptero::vidaCambiada, this, [this](int actual, int maximo) {
+        qreal proporcion = qreal(actual) / maximo;
+        barraVida->setRect(20, 20, 200 * proporcion, 20);
+    });
+
+    connect(helicoptero, &Helicoptero::destruido, this, [this]() {
+        motorJuego->detener(); // futuro Game Over
+    });
+
     fondo = new FondoScroll(escena, 900, 580);
+
 
     gestorEntidades = new GestorEntidades(escena, helicoptero, 900, 580);
 
@@ -44,21 +59,40 @@ NucleoFisico::NucleoFisico(QWidget *parent) : QMainWindow(parent) {
         }
     });
 
+    connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
+        if (accion == InputManager::Accion::Ascender) {
+            helicoptero->setAscenso(activa);
+        } else if (accion == InputManager::Accion::Izquierda) {
+            helicoptero->setMoverIzquierda(activa);
+        } else if (accion == InputManager::Accion::Derecha) {
+            helicoptero->setMoverDerecha(activa);
+        } else if (accion == InputManager::Accion::Disparar && activa) {
+            QPointF origenDisparo = helicoptero->pos() + QPointF(helicoptero->pixmap().width(), helicoptero->pixmap().height() / 2.0);
+            gestorEntidades->dispararMisil(origenDisparo);
+        }
+    });
+
     connect(motorJuego, &MotorJuego::tickFisica, helicoptero, &Helicoptero::actualizarFisica);
 
     connect(motorJuego, &MotorJuego::tickFisica, this, [this](qreal deltaTime) {
         fondo->actualizar(deltaTime);
         gestorEntidades->actualizar(deltaTime);
         gestorEntidades->intentarGenerar(deltaTime);
+        gestorEntidades->resolverImpactosMisiles();
 
-        Entidad *colisionado = gestorEntidades->colisionCon(helicoptero);
-        if (colisionado) {
-            if (colisionado->tipo() == TipoEntidad::Civil) {
-                gestorEntidades->rescatar(colisionado);
-                // incrementar rescatados
-            } else {
-                // restar salud
+        Entidad *civilCerca = gestorEntidades->civilCercano(helicoptero, 40.0); //rango de rescate
+        if (civilCerca) {
+            gestorEntidades->rescatar(civilCerca);
+            // incrementar numero de rescatados
+        }
+
+        Entidad *peligro = gestorEntidades->colisionPeligro(helicoptero);
+        if (peligro) {
+            helicoptero->recibirDano(1);
+            if (peligro->tipo() == TipoEntidad::Enemigo) {
+                gestorEntidades->eliminarEntidad(peligro); //se destruye al chocar (kamikaze)
             }
+            //obstaculo solido
         }
     });
 
@@ -81,3 +115,4 @@ void NucleoFisico::closeEvent(QCloseEvent *event) {
     }
     QMainWindow::closeEvent(event);
 }
+

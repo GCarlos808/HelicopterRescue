@@ -11,6 +11,7 @@ Helicoptero::Helicoptero(QGraphicsItem *parent)
     , velocidadHorizontal(250.0)
     , izquierdaActiva(false)
     , derechaActiva(false)
+    , vida(VIDA_MAXIMA)
 {
     QPixmap sprite(":/assets/chopper1_1.png");
     setPixmap(sprite.scaled(110, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -57,3 +58,18 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
 
     setRotation(anguloInclinacion);
 }
+
+void Helicoptero::recibirDano(int cantidad) {
+    vida -= cantidad;
+    if (vida < 0) vida = 0;
+
+    emit vidaCambiada(vida, VIDA_MAXIMA);
+
+    if (vida == 0) {
+        emit destruido();
+    }
+}
+
+int Helicoptero::vidaActual() const { return vida; }
+
+int Helicoptero::vidaMaxima() const { return VIDA_MAXIMA; }

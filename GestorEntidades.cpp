@@ -4,6 +4,8 @@
 #include "Civil.h"
 #include "Drone.h"
 #include <QRandomGenerator>
+#include <QLineF>
+#include "Misil.h"
 
 GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helicopteroJugador, qreal ancho, qreal alto)
     : entidades(nullptr), cantidad(0), capacidad(4)
@@ -72,7 +74,13 @@ void GestorEntidades::generarEdificio() {
 
 void GestorEntidades::generarCivil() {
     Civil *nuevo = new Civil();
-    nuevo->setPos(anchoEscena, altoEscena - nuevo->pixmap().height());
+
+    qreal margenSuperior = 100.0;
+    qreal margenInferior = 20.0;
+    qreal rangoDisponible = altoEscena - nuevo->pixmap().height() - margenSuperior - margenInferior;
+    qreal posY = margenSuperior + QRandomGenerator::global()->bounded(int(rangoDisponible));
+
+    nuevo->setPos(anchoEscena, posY);
     escena->addItem(nuevo);
     agregar(nuevo);
 }
@@ -98,11 +106,15 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
     }
 }
 
-Entidad *GestorEntidades::colisionCon(QGraphicsItem *objetivo) const {
+Entidad *GestorEntidades::civilCercano(QGraphicsItem *objetivo, qreal radio) const {
+    QPointF centroObjetivo = objetivo->sceneBoundingRect().center();
+
     for (int i = 0; i < cantidad; ++i) {
-        if (objetivo->collidesWithItem(entidades[i])) {
-            return entidades[i];
-        }
+        if (entidades[i]->tipo() != TipoEntidad::Civil) continue;
+
+        QPointF centroCivil = entidades[i]->sceneBoundingRect().center();
+        qreal distancia = QLineF(centroObjetivo, centroCivil).length();
+        if (distancia <= radio) return entidades[i];
     }
     return nullptr;
 }
@@ -117,6 +129,61 @@ void GestorEntidades::rescatar(Entidad *civil) {
             }
             cantidad--;
             return;
+        }
+    }
+}
+Entidad *GestorEntidades::colisionPeligro(QGraphicsItem *objetivo) const {
+    for (int i = 0; i < cantidad; ++i) {
+        TipoEntidad t = entidades[i]->tipo();
+        if (t != TipoEntidad::Obstaculo && t != TipoEntidad::Enemigo) continue;
+        if (objetivo->collidesWithItem(entidades[i])) return entidades[i];
+    }
+    return nullptr;
+}
+
+void GestorEntidades::eliminarEntidad(Entidad *entidad) {
+    for (int i = 0; i < cantidad; ++i) {
+        if (entidades[i] == entidad) {
+            escena->removeItem(entidades[i]);
+            delete entidades[i];
+            for (int j = i; j < cantidad - 1; ++j) {
+                entidades[j] = entidades[j + 1];
+            }
+            cantidad--;
+            return;
+        }
+    }
+}
+
+void GestorEntidades::dispararMisil(QPointF origen) {
+    Misil *nuevo = new Misil(anchoEscena);
+    nuevo->setPos(origen);
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
+void GestorEntidades::resolverImpactosMisiles() {
+    for (int i = 0; i < cantidad; ++i) {
+        if (entidades[i]->tipo() != TipoEntidad::Misil) continue;
+
+        for (int j = 0; j < cantidad; ++j) {
+            if (entidades[j]->tipo() != TipoEntidad::Enemigo) continue;
+
+            if (entidades[i]->collidesWithItem(entidades[j])) {
+                Entidad *drone = entidades[j];
+                Entidad *misil = entidades[i];
+
+                //se elimina primero el elemento con mayor índice
+                if (j > i) {
+                    eliminarEntidad(drone);
+                    eliminarEntidad(misil);
+                } else {
+                    eliminarEntidad(misil);
+                    eliminarEntidad(drone);
+                }
+
+                return; //salir inmediatamente
+            }
         }
     }
 }

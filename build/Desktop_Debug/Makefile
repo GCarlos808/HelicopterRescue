@@ -61,6 +61,7 @@ SOURCES       = ../../Civil.cpp \
 		../../Helicoptero.cpp \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
+		../../Misil.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
 		../../ScoreManager.cpp \
@@ -81,6 +82,7 @@ OBJECTS       = Civil.o \
 		Helicoptero.o \
 		Inputs.o \
 		MenuPrincipal.o \
+		Misil.o \
 		MotorJuego.o \
 		NucleoFisico.o \
 		ScoreManager.o \
@@ -380,6 +382,7 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		../../Helicoptero.h \
 		../../Inputs.h \
 		../../MenuPrincipal.h \
+		../../Misil.h \
 		../../MotorJuego.h \
 		../../NucleoFisico.h \
 		../../SavedGame.h \
@@ -394,6 +397,7 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		../../Helicoptero.cpp \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
+		../../Misil.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
 		../../ScoreManager.cpp \
@@ -993,8 +997,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../VentanaPuntajes.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../Misil.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../VentanaPuntajes.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../Misil.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1146,7 +1150,8 @@ GestorEntidades.o: ../../GestorEntidades.cpp ../../GestorEntidades.h \
 		../../Entidad.h \
 		../../Edificio.h \
 		../../Civil.h \
-		../../Drone.h
+		../../Drone.h \
+		../../Misil.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GestorEntidades.o ../../GestorEntidades.cpp
 
 Helicoptero.o: ../../Helicoptero.cpp ../../Helicoptero.h
@@ -1167,6 +1172,10 @@ MenuPrincipal.o: ../../MenuPrincipal.cpp ../../MenuPrincipal.h \
 		../../FondoScroll.h \
 		../../VentanaPuntajes.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MenuPrincipal.o ../../MenuPrincipal.cpp
+
+Misil.o: ../../Misil.cpp ../../Misil.h \
+		../../Entidad.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Misil.o ../../Misil.cpp
 
 MotorJuego.o: ../../MotorJuego.cpp ../../MotorJuego.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MotorJuego.o ../../MotorJuego.cpp

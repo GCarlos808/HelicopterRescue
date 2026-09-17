@@ -17,6 +17,10 @@ public:
     void setMoverIzquierda(bool activo);
     void setMoverDerecha(bool activo);
 
+    void recibirDano(int cantidad);
+    int vidaActual() const;
+    int vidaMaxima() const;
+
 private:
     qreal velocidadVertical;
     qreal gravedad;
@@ -26,6 +30,13 @@ private:
     qreal velocidadHorizontal;
     bool izquierdaActiva;
     bool derechaActiva;
+
+    int vida;
+    static const int VIDA_MAXIMA = 3;
+
+signals:
+    void vidaCambiada(int actual, int maximo);
+    void destruido();
 };
 
 #endif // HELICOPTERO_H

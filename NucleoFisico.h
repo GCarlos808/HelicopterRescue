@@ -9,6 +9,7 @@
 #include "MotorJuego.h"
 #include "GestorEntidades.h"
 #include "FondoScroll.h"
+#include <QGraphicsRectItem>
 
 class QCloseEvent;
 class QKeyEvent;
@@ -33,6 +34,8 @@ private:
     Helicoptero *helicoptero;
     InputManager *inputManager;
     MotorJuego *motorJuego;
+    QGraphicsRectItem *fondoBarraVida;
+    QGraphicsRectItem *barraVida;
 };
 
 #endif // NUCLEOFISICO_H

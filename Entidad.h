@@ -6,7 +6,8 @@
 enum class TipoEntidad {
     Obstaculo,
     Civil,
-    Enemigo
+    Enemigo,
+    Misil
 };
 
 class Entidad : public QGraphicsPixmapItem {

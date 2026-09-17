@@ -7,7 +7,7 @@ Drone::Drone(Helicoptero *objetivoHelicoptero, QGraphicsItem *parent)
     , objetivo(objetivoHelicoptero)
     , velocidadSeguimiento(80.0)
 {
-    setPixmap(QPixmap(":/assets/drone.png").scaled(50, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    setPixmap(QPixmap(":/assets/drone.png").scaled(90, 55, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void Drone::actualizar(qreal deltaTime) {

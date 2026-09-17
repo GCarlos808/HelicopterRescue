@@ -12,6 +12,7 @@ SOURCES += \
     Helicoptero.cpp \
     Inputs.cpp \
     MenuPrincipal.cpp \
+    Misil.cpp \
     MotorJuego.cpp \
     NucleoFisico.cpp \
     ScoreManager.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     Helicoptero.h \
     Inputs.h \
     MenuPrincipal.h \
+    Misil.h \
     MotorJuego.h \
     NucleoFisico.h \
     SavedGame.h \

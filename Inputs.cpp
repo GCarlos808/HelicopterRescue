@@ -7,6 +7,9 @@ InputManager::InputManager(QObject *parent) : QObject(parent) {
     mapeoTeclas.insert(Qt::Key_Left, Accion::Izquierda);
     mapeoTeclas.insert(Qt::Key_Right, Accion::Derecha);
 
+    mapeoTeclas.insert(Qt::Key_Space, Accion::Disparar);
+    estadoAcciones.insert(Accion::Disparar, false);
+
     // Todas las acciones inician inactivas.
     estadoAcciones.insert(Accion::Ascender, false);
     estadoAcciones.insert(Accion::Izquierda, false);

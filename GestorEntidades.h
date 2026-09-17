@@ -13,8 +13,13 @@ public:
 
     void actualizar(qreal deltaTime);
     void intentarGenerar(qreal deltaTime);
-    Entidad *colisionCon(QGraphicsItem *objetivo) const;
+    Entidad *colisionPeligro(QGraphicsItem *objetivo) const;
     void rescatar(Entidad *civil);
+    Entidad *civilCercano(QGraphicsItem *objetivo, qreal radio) const;
+
+    void eliminarEntidad(Entidad *entidad);
+    void dispararMisil(QPointF origen);
+    void resolverImpactosMisiles();
 
 private:
     void agregar(Entidad *nueva);
