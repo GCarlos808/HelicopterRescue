@@ -124,15 +124,11 @@ void GestorEntidades::generarCivil() {
 
     Civil *nuevo = new Civil();
 
-    qreal margenSuperior = 100.0;
-    qreal margenInferior = 20.0;
     qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
-    qreal rangoDisponible = altoEscena - altoSprite - margenSuperior - margenInferior;
 
-    qreal posY = margenSuperior;
-    if (rangoDisponible > 1.0) {
-        posY = margenSuperior + QRandomGenerator::global()->bounded(int(rangoDisponible));
-    }
+    qreal margenSuelo = 40.0;
+
+    qreal posY = altoEscena - altoSprite - margenSuelo;
 
     nuevo->setPos(anchoEscena, posY);
     escena->addItem(nuevo);

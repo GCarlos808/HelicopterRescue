@@ -1,4 +1,3 @@
-// Drone.cpp
 #include "Drone.h"
 #include "Helicoptero.h"
 
