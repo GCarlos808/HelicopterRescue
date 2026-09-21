@@ -4,6 +4,10 @@
 #include "Civil.h"
 #include "Drone.h"
 #include "Misil.h"
+#include "MisilEnemigo.h"
+#include "Soldado.h"
+#include "HelicopteroEnemigo.h"
+#include "Disparable.h"
 #include <QLineF>
 #include <QRandomGenerator>
 #include <algorithm>
@@ -13,8 +17,12 @@ GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helic
     , escena(escenaJuego), helicoptero(helicopteroJugador)
     , anchoEscena(ancho), altoEscena(alto)
     , tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0)
+<<<<<<< HEAD
     , modoGeneracion(ModoGeneracion::Mixto)
     , edificiosAltos(false)
+=======
+    , generarActivo(false)
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 {
     entidades = new Entidad*[capacidad];
     for (int i = 0; i < capacidad; ++i) {
@@ -99,14 +107,14 @@ void GestorEntidades::liberarSalientes() {
 
 void GestorEntidades::actualizar(qreal deltaTime) {
     for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i]) {
-            entidades[i]->actualizar(deltaTime);
-        }
+        if (entidades[i]) entidades[i]->actualizar(deltaTime);
     }
+    procesarDisparosEnemigos();
     liberarSalientes();
 }
 
 void GestorEntidades::generarEdificio() {
+<<<<<<< HEAD
     if (!escena) {
         return;
     }
@@ -117,6 +125,12 @@ void GestorEntidades::generarEdificio() {
     qreal alturaAleatoria = alturaBase + QRandomGenerator::global()->bounded(rangoAltura);
     const int anchoEdificio = edificiosAltos ? 95 : 80;
     nuevo->setPixmap(nuevo->pixmap().scaled(anchoEdificio, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+=======
+    if (!escena) return;
+    Edificio *nuevo = new Edificio(nivelActual); // ahora recibe el nivel
+    qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150);
+    nuevo->setPixmap(nuevo->pixmap().scaled(80, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     nuevo->setPos(anchoEscena, altoEscena - alturaAleatoria);
     escena->addItem(nuevo);
     agregar(nuevo);
@@ -129,15 +143,11 @@ void GestorEntidades::generarCivil() {
 
     Civil *nuevo = new Civil();
 
-    qreal margenSuperior = 100.0;
-    qreal margenInferior = 20.0;
     qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
-    qreal rangoDisponible = altoEscena - altoSprite - margenSuperior - margenInferior;
 
-    qreal posY = margenSuperior;
-    if (rangoDisponible > 1.0) {
-        posY = margenSuperior + QRandomGenerator::global()->bounded(int(rangoDisponible));
-    }
+    qreal margenSuelo = 40.0;
+
+    qreal posY = altoEscena - altoSprite - margenSuelo;
 
     nuevo->setPos(anchoEscena, posY);
     escena->addItem(nuevo);
@@ -162,6 +172,7 @@ void GestorEntidades::generarDrone() {
     agregar(nuevo);
 }
 
+<<<<<<< HEAD
 void GestorEntidades::setIntervaloSpawn(qreal segundos) {
     if (segundos < 0.4) {
         segundos = 0.4;
@@ -175,15 +186,23 @@ void GestorEntidades::setModoGeneracion(ModoGeneracion modo) {
 
 void GestorEntidades::setEdificiosAltos(bool activos) {
     edificiosAltos = activos;
+=======
+void GestorEntidades::setGeneracionActiva(bool activa) {
+    generarActivo = activa;
+}
+
+bool GestorEntidades::generacionActiva() const {
+    return generarActivo;
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 }
 
 void GestorEntidades::intentarGenerar(qreal deltaTime) {
+    if (!generarActivo) return;
     tiempoDesdeUltimoSpawn += deltaTime;
-    if (tiempoDesdeUltimoSpawn < intervaloSpawn) {
-        return;
-    }
+    if (tiempoDesdeUltimoSpawn < intervaloSpawn) return;
     tiempoDesdeUltimoSpawn = 0.0;
 
+<<<<<<< HEAD
     switch (modoGeneracion) {
     case ModoGeneracion::Evacuacion: {
         // 60% edificios, 40% civiles — sin drones
@@ -228,6 +247,30 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
         }
         break;
     }
+=======
+    if (nivelActual >= 3) {
+        //sin edificios, solo entidades
+        int eleccion = QRandomGenerator::global()->bounded(3);
+        switch (eleccion) {
+        case 0: generarCivil(); break;
+        case 1: generarDrone(); break;
+        case 2: generarHelicopteroEnemigo(); break;
+        }
+        return;
+    }
+
+    int eleccion = QRandomGenerator::global()->bounded(3);
+    switch (eleccion) {
+    case 0: generarEdificio(); break;
+    case 1:
+        if (nivelActual >= 2 && QRandomGenerator::global()->bounded(2) == 0) {
+            generarSoldado();
+        } else {
+            generarCivil();
+        }
+        break;
+    case 2: generarDrone(); break;
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     }
 }
 
@@ -327,6 +370,10 @@ bool GestorEntidades::resolverImpactosMisiles() {
             Entidad *drone = entidades[j];
             Entidad *misil = entidades[i];
 
+<<<<<<< HEAD
+=======
+            // eliminar primero el índice mayor para no invalidar el menor.
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
             if (j > i) {
                 eliminarEntidad(drone);
                 eliminarEntidad(misil);
@@ -338,4 +385,47 @@ bool GestorEntidades::resolverImpactosMisiles() {
         }
     }
     return false;
+}
+
+void GestorEntidades::establecerNivel(int nivel) {
+    nivelActual = nivel;
+}
+
+void GestorEntidades::generarSoldado() {
+    if (!escena) return;
+    Soldado *nuevo = new Soldado(nivelActual);
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    nuevo->setPos(anchoEscena, altoEscena - altoSprite - 40.0);
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
+void GestorEntidades::procesarDisparosEnemigos() {
+    for (int i = 0; i < cantidad; ++i) {
+        if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Enemigo) continue;
+
+        Disparable *disparador = dynamic_cast<Disparable*>(entidades[i]);
+        if (!disparador || !disparador->listoParaDisparar()) continue;
+
+        MisilEnemigo *proyectil = new MisilEnemigo();
+        proyectil->setPos(disparador->origenDisparo());
+        escena->addItem(proyectil);
+        agregar(proyectil);
+        disparador->reiniciarCooldownDisparo();
+
+    }
+}
+
+void GestorEntidades::generarHelicopteroEnemigo() {
+    if (!escena || !helicoptero) return;
+
+    HelicopteroEnemigo *nuevo = new HelicopteroEnemigo(helicoptero);
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    int rangoY = int(altoEscena - altoSprite - 20.0);
+    qreal posY = 20.0;
+    if (rangoY > 1) posY = QRandomGenerator::global()->bounded(rangoY);
+
+    nuevo->setPos(anchoEscena, posY);
+    escena->addItem(nuevo);
+    agregar(nuevo);
 }

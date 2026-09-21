@@ -10,29 +10,35 @@ SOURCES += \
     FondoScroll.cpp \
     GestorEntidades.cpp \
     Helicoptero.cpp \
+    HelicopteroEnemigo.cpp \
     Inputs.cpp \
     MenuPrincipal.cpp \
     Misil.cpp \
+    MisilEnemigo.cpp \
     MotorJuego.cpp \
     NucleoFisico.cpp \
     PantallaNiveles.cpp \
     PantallaResultado.cpp \
     ProgressManager.cpp \
     ScoreManager.cpp \
+    Soldado.cpp \
     VentanaPuntajes.cpp \
     main.cpp
 
 HEADERS += \
     Civil.h \
+    Disparable.h \
     Drone.h \
     Edificio.h \
     Entidad.h \
     FondoScroll.h \
     GestorEntidades.h \
     Helicoptero.h \
+    HelicopteroEnemigo.h \
     Inputs.h \
     MenuPrincipal.h \
     Misil.h \
+    MisilEnemigo.h \
     MotorJuego.h \
     NucleoFisico.h \
     PantallaNiveles.h \
@@ -41,6 +47,7 @@ HEADERS += \
     SavedGame.h \
     ScoreEntry.h \
     ScoreManager.h \
+    Soldado.h \
     VentanaPuntajes.h
 
 # Default rules for deployment.

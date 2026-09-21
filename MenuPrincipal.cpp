@@ -261,6 +261,7 @@ void MenuPrincipal::alVerInstrucciones()
         this,
         "Instrucciones",
         "Objetivo:\n"
+<<<<<<< HEAD
         "Controla el helicoptero, evita obstaculos y rescata civiles.\n\n"
         "Niveles:\n"
         "- Nivel 1: rescata 3 civiles\n"
@@ -271,6 +272,20 @@ void MenuPrincipal::alVerInstrucciones()
         "Controles:\n"
         "- Flechas: mover / ascender\n"
         "- Espacio: disparar misil\n"
+=======
+        "Despega, avanza por los 11 sectores del mapa, rescata civiles\n"
+        "y aterriza en el hangar final para completar el nivel 1.\n"
+        "Cada civil rescatado suma 100 puntos.\n\n"
+        "Rescate:\n"
+        "- Debes aterrizar con suavidad cerca de un civil.\n"
+        "- Si tocas el suelo a gran velocidad, pierdes toda la vida.\n"
+        "- En el sector 11, aterriza en el hangar para entregar a los civiles.\n\n"
+        "Controles:\n"
+        "- Flecha Arriba: despegar / ascender\n"
+        "- Flechas Izquierda/Derecha: moverse e inclinarse\n"
+        "- Espacio: disparar (cooldown de 3 segundos)\n"
+        "- El escenario no avanza hasta que despegues.\n"
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
         );
 }
 
@@ -295,8 +310,12 @@ void MenuPrincipal::alCerrarJuego()
     show();
     raise();
     activateWindow();
+<<<<<<< HEAD
 
     if (accion == AccionPostCierre::AbrirNiveles) {
         alVerNiveles();
     }
 }
+=======
+}
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc

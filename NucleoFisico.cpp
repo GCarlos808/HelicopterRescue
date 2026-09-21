@@ -6,6 +6,7 @@
 
 #include <QCloseEvent>
 #include <QKeyEvent>
+<<<<<<< HEAD
 #include <QSoundEffect>
 #include <QUrl>
 #include <algorithm>
@@ -81,8 +82,39 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
                        .arg(nombrePiloto_)
                        .arg(tituloNivel));
 
+=======
+#include <QShowEvent>
+#include <QFont>
+#include <QMessageBox>
+
+NucleoFisico::NucleoFisico(QWidget *parent)
+    : QMainWindow(parent)
+    , gestorEntidades(nullptr)
+    , fondo(nullptr)
+    , escena(nullptr)
+    , vista(nullptr)
+    , helicoptero(nullptr)
+    , inputManager(nullptr)
+    , motorJuego(nullptr)
+    , fondoBarraVida(nullptr)
+    , barraVida(nullptr)
+    , textoPuntaje(nullptr)
+    , textoRescatados(nullptr)
+    , textoSector(nullptr)
+    , textoEstado(nullptr)
+    , puntaje(0)
+    , rescatados(0)
+    , cooldownDisparo(0.0)
+    , misionIniciada(false)
+    , nivelCompletado(false)
+    , nivelActual(1)
+{
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     escena = new QGraphicsScene(this);
     escena->setSceneRect(0, 0, 900, 580);
+
+    // Crear el fondo antes del motor
+    fondo = new FondoScroll(escena, 900, 580, nivelActual);
 
     helicoptero = new Helicoptero();
     escena->addItem(helicoptero);
@@ -92,6 +124,7 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
     fondoBarraVida->setZValue(10);
     barraVida->setZValue(11);
 
+<<<<<<< HEAD
     textoHud = escena->addText("");
     textoHud->setDefaultTextColor(Qt::white);
     textoHud->setPos(20, 48);
@@ -110,6 +143,28 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
     fuenteHistoria.setBold(true);
     textoHistoria->setFont(fuenteHistoria);
     textoHistoria->setTextWidth(860);
+=======
+    QFont fuenteHud("Segoe UI", 14, QFont::Bold);
+    textoPuntaje = escena->addText("Puntos: 0", fuenteHud);
+    textoPuntaje->setDefaultTextColor(Qt::white);
+    textoPuntaje->setPos(20, 48);
+    textoPuntaje->setZValue(12);
+
+    textoRescatados = escena->addText("Rescatados: 0", fuenteHud);
+    textoRescatados->setDefaultTextColor(QColor(120, 220, 140));
+    textoRescatados->setPos(20, 74);
+    textoRescatados->setZValue(12);
+
+    textoSector = escena->addText("Sector: 1/11", fuenteHud);
+    textoSector->setDefaultTextColor(QColor(180, 210, 255));
+    textoSector->setPos(20, 100);
+    textoSector->setZValue(12);
+
+    textoEstado = escena->addText("Despega para iniciar la mision", fuenteHud);
+    textoEstado->setDefaultTextColor(QColor(255, 210, 90));
+    textoEstado->setPos(230, 20);
+    textoEstado->setZValue(12);
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 
     connect(helicoptero, &Helicoptero::vidaCambiada, this, [this](int actual, int maximo) {
         qreal proporcion = qreal(actual) / maximo;
@@ -117,10 +172,34 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
     });
 
     connect(helicoptero, &Helicoptero::destruido, this, [this]() {
+<<<<<<< HEAD
         alPerder();
+=======
+        if (motorJuego) {
+            motorJuego->detener();
+        }
+        if (fondo) {
+            fondo->setScrollActivo(false);
+        }
+        if (gestorEntidades) {
+            gestorEntidades->setGeneracionActiva(false);
+        }
+        if (textoEstado) {
+            textoEstado->setPlainText("Mision fallida");
+            textoEstado->setDefaultTextColor(QColor(255, 120, 120));
+        }
     });
 
-    fondo = new FondoScroll(escena, 900, 580);
+    connect(helicoptero, &Helicoptero::aterrizajeSuave, this, [this]() {
+        if (nivelCompletado || !misionIniciada || !fondo) {
+            return;
+        }
+        if (fondo->enZonaHangar()) {
+            completarNivel();
+        }
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
+    });
+
     gestorEntidades = new GestorEntidades(escena, helicoptero, 900, 580);
     configurarNivel(nivelActual_);
     actualizarHud();
@@ -143,31 +222,63 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
     motorJuego = new MotorJuego(this);
 
     connect(inputManager, &InputManager::accionCambiada, this, [this](InputManager::Accion accion, bool activa) {
+<<<<<<< HEAD
         if (partidaTerminada_) {
+=======
+        if (nivelCompletado && nivelActual > 2) {
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
             return;
         }
         if (accion == InputManager::Accion::Ascender) {
             helicoptero->setAscenso(activa);
+            if (activa) {
+                iniciarMision();
+            }
         } else if (accion == InputManager::Accion::Izquierda) {
             helicoptero->setMoverIzquierda(activa);
         } else if (accion == InputManager::Accion::Derecha) {
             helicoptero->setMoverDerecha(activa);
         } else if (accion == InputManager::Accion::Disparar && activa) {
-            QPointF origenDisparo = helicoptero->pos()
-                + QPointF(helicoptero->pixmap().width(), helicoptero->pixmap().height() / 2.0);
-            gestorEntidades->dispararMisil(origenDisparo);
+            intentarDisparar();
         }
     });
 
     connect(motorJuego, &MotorJuego::tickFisica, helicoptero, &Helicoptero::actualizarFisica);
 
     connect(motorJuego, &MotorJuego::tickFisica, this, [this](qreal deltaTime) {
+<<<<<<< HEAD
         if (partidaTerminada_) {
             return;
         }
 
         tiempoPartida_ += deltaTime;
+=======
+        if (!fondo || !gestorEntidades || !helicoptero) {
+            return;
+        }
+
+        if (cooldownDisparo > 0.0) {
+            cooldownDisparo -= deltaTime;
+            if (cooldownDisparo < 0.0) {
+                cooldownDisparo = 0.0;
+            }
+        }
+
+        // Scroll solo en vuelo
+        if (misionIniciada && !nivelCompletado) {
+            const bool debeScrollear = !helicoptero->estaAterrizado()
+            && !fondo->finDeRecorrido()
+                && helicoptero->vidaActual() > 0;
+            fondo->setScrollActivo(debeScrollear);
+        }
+
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
         fondo->actualizar(deltaTime);
+
+        if (misionIniciada && fondo->enZonaHangar()) {
+            gestorEntidades->setGeneracionActiva(false);
+        }
+
         gestorEntidades->actualizar(deltaTime);
         gestorEntidades->intentarGenerar(deltaTime);
 
@@ -180,6 +291,7 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
             }
         }
 
+<<<<<<< HEAD
         Entidad *civilCerca = gestorEntidades->civilCercano(helicoptero, 40.0);
         if (civilCerca) {
             gestorEntidades->rescatar(civilCerca);
@@ -191,6 +303,15 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
             } else if (rescatados_ >= metaRescates_) {
                 alCompletarNivel();
                 return;
+=======
+        if (helicoptero->estaAterrizado()
+            && helicoptero->vidaActual() > 0
+            && !fondo->enZonaHangar()) {
+            Entidad *civilCerca = gestorEntidades->civilCercano(helicoptero, 70.0);
+            if (civilCerca) {
+                gestorEntidades->rescatar(civilCerca);
+                registrarRescate();
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
             }
         }
 
@@ -211,13 +332,18 @@ NucleoFisico::NucleoFisico(const QString& nombrePiloto,
             }
         }
 
+<<<<<<< HEAD
         actualizarHud();
+=======
+        actualizarHudMision();
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     });
 
     motorJuego->iniciar();
 }
 
 NucleoFisico::~NucleoFisico() {
+    releaseKeyboard();
     if (motorJuego) {
         motorJuego->detener();
     }
@@ -227,6 +353,7 @@ NucleoFisico::~NucleoFisico() {
     fondo = nullptr;
 }
 
+<<<<<<< HEAD
 void NucleoFisico::configurarNivel(int nivel)
 {
     modoHistoria_ = (nivel == 4);
@@ -450,19 +577,213 @@ void NucleoFisico::mostrarPantallaResultado(int tipoCodigo)
 
 void NucleoFisico::keyPressEvent(QKeyEvent *event) {
     if (inputManager && !partidaTerminada_) {
+=======
+bool NucleoFisico::esTeclaDeJuego(int codigoTecla) const {
+    return codigoTecla == Qt::Key_Up
+           || codigoTecla == Qt::Key_Left
+           || codigoTecla == Qt::Key_Right
+           || codigoTecla == Qt::Key_Space;
+}
+
+bool NucleoFisico::event(QEvent *event) {
+    if (event->type() == QEvent::ShortcutOverride) {
+        auto *keyEvent = static_cast<QKeyEvent *>(event);
+        if (esTeclaDeJuego(keyEvent->key())) {
+            event->accept();
+            return true;
+        }
+    }
+    return QMainWindow::event(event);
+}
+
+void NucleoFisico::showEvent(QShowEvent *event) {
+    QMainWindow::showEvent(event);
+    activateWindow();
+    setFocus(Qt::OtherFocusReason);
+    grabKeyboard();
+}
+
+void NucleoFisico::intentarDisparar() {
+    if (!helicoptero || helicoptero->vidaActual() <= 0 || !gestorEntidades) {
+        return;
+    }
+    if (!misionIniciada || cooldownDisparo > 0.0) {
+        return;
+    }
+
+    QPointF origenDisparo = helicoptero->pos()
+                            + QPointF(helicoptero->pixmap().width(), helicoptero->pixmap().height() / 2.0);
+    gestorEntidades->dispararMisil(origenDisparo);
+    cooldownDisparo = COOLDOWN_DISPARO_SEGUNDOS;
+}
+
+void NucleoFisico::actualizarHudRescate() {
+    if (textoPuntaje) {
+        textoPuntaje->setPlainText(QString("Puntos: %1").arg(puntaje));
+    }
+    if (textoRescatados) {
+        textoRescatados->setPlainText(QString("Rescatados: %1").arg(rescatados));
+    }
+}
+
+void NucleoFisico::registrarRescate() {
+    ++rescatados;
+    puntaje += PUNTOS_POR_RESCATE;
+    actualizarHudRescate();
+}
+
+int NucleoFisico::puntajeActual() const {
+    return puntaje;
+}
+
+int NucleoFisico::civilesRescatados() const {
+    return rescatados;
+}
+
+void NucleoFisico::keyPressEvent(QKeyEvent *event) {
+    if (event->isAutoRepeat()) {
+        event->accept();
+        return;
+    }
+    if (inputManager) {
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
         inputManager->procesarPresion(event->key());
     }
+    event->accept();
 }
 
 void NucleoFisico::keyReleaseEvent(QKeyEvent *event) {
+<<<<<<< HEAD
     if (inputManager && !partidaTerminada_) {
+=======
+    if (event->isAutoRepeat()) {
+        event->accept();
+        return;
+    }
+    if (inputManager) {
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
         inputManager->procesarLiberacion(event->key());
     }
+    event->accept();
 }
 
 void NucleoFisico::closeEvent(QCloseEvent *event) {
+    releaseKeyboard();
     if (motorJuego) {
         motorJuego->detener();
     }
     QMainWindow::closeEvent(event);
+}
+
+void NucleoFisico::iniciarMision() {
+    if (misionIniciada || !fondo || !gestorEntidades) {
+        return;
+    }
+    misionIniciada = true;
+    nivelCompletado = false;
+    fondo->setScrollActivo(true);
+    gestorEntidades->setGeneracionActiva(true);
+    actualizarHudMision();
+}
+
+void NucleoFisico::actualizarHudMision() {
+    if (!fondo) {
+        return;
+    }
+
+    if (textoSector) {
+        textoSector->setPlainText(
+            QString("Nivel %1 | Sector: %2/%3")
+                .arg(nivelActual)
+                .arg(fondo->segmentoActual())
+                .arg(FondoScroll::NUM_SEGMENTOS));
+    }
+
+    if (!textoEstado) {
+        return;
+    }
+
+    if (nivelCompletado && nivelActual > 2) {
+        textoEstado->setPlainText("Mision completada");
+        textoEstado->setDefaultTextColor(QColor(120, 255, 160));
+    } else if (!misionIniciada) {
+        textoEstado->setPlainText("Despega para iniciar la mision");
+        textoEstado->setDefaultTextColor(QColor(255, 210, 90));
+    } else if (fondo->enZonaHangar()) {
+        textoEstado->setPlainText("Hangar a la vista - Aterriza con suavidad");
+        textoEstado->setDefaultTextColor(QColor(120, 255, 160));
+    } else {
+        textoEstado->setPlainText("Mision en curso - Rescata civiles");
+        textoEstado->setDefaultTextColor(QColor(180, 220, 255));
+    }
+}
+
+void NucleoFisico::completarNivel() {
+    if (nivelCompletado || !fondo || !gestorEntidades) {
+        return;
+    }
+
+    puntaje += BONUS_NIVEL;
+    actualizarHudRescate();
+    fondo->setScrollActivo(false);
+    gestorEntidades->setGeneracionActiva(false);
+
+    if (nivelActual == 1) {
+        nivelActual = 2;
+        nivelCompletado = false;
+        misionIniciada = false;
+        gestorEntidades->establecerNivel(2);
+        fondo->establecerNivel(2);
+
+        QMessageBox::information(
+            this, "Nivel 1 completado",
+            QString("Entrega en hangar exitosa.\n\n"
+                    "Civiles rescatados: %1\n"
+                    "Puntos: %2\n\n"
+                    "Despega para comenzar el nivel 2.")
+                .arg(rescatados)
+                .arg(puntaje));
+
+    } else if (nivelActual == 2) {
+        nivelActual = 3;
+        nivelCompletado = false;
+        misionIniciada = false;
+        gestorEntidades->establecerNivel(3);
+        fondo->establecerNivel(3);
+        helicoptero->setTurbulenciaActiva(true); //tormenta al entrar al nivel 3
+
+        QMessageBox::information(
+            this, "Nivel 2 completado",
+            QString("Entrega en hangar exitosa.\n\n"
+                    "Civiles rescatados: %1\n"
+                    "Puntos: %2\n\n"
+                    "Atención: Se reportan fuertes turbulencias. Despega para el nivel 3.")
+                .arg(rescatados)
+                .arg(puntaje));
+
+    } else {
+        //fin del juego
+        nivelCompletado = true;
+        gestorEntidades->setGeneracionActiva(false);
+        helicoptero->setTurbulenciaActiva(false);
+
+        if (motorJuego) {
+            motorJuego->detener();
+        }
+        if (textoEstado) {
+            textoEstado->setPlainText("Mision completada");
+            textoEstado->setDefaultTextColor(QColor(120, 255, 160));
+        }
+
+        QMessageBox::information(
+            this,
+            "Misión Completada",
+            QString("¡Has terminado toda la misión!\n\n"
+                    "Civiles rescatados: %1\n"
+                    "Puntos finales: %2")
+                .arg(rescatados)
+                .arg(puntaje));
+    }
+
+    actualizarHudMision();
 }

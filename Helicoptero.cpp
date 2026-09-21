@@ -1,4 +1,5 @@
 #include "Helicoptero.h"
+#include <QRandomGenerator>
 #include <algorithm>
 
 Helicoptero::Helicoptero(QGraphicsItem *parent)
@@ -14,11 +15,17 @@ Helicoptero::Helicoptero(QGraphicsItem *parent)
     , vida(VIDA_MAXIMA_DEFAULT)
     , vidaMaxima_(VIDA_MAXIMA_DEFAULT)
     , tiempoInvulnerable(0.0)
+    , aterrizado(true)
+    , turbulenciaActiva(false)
+    , vientoHorizontal(0.0)
+    , vientoVertical(0.0)
+    , tiempoParaCambioViento(0.0)
 {
     QPixmap sprite(":/assets/chopper1_1.png");
     setPixmap(sprite.scaled(110, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setTransformOriginPoint(boundingRect().center());
-    setPos(150, 250);
+    // arranca en el suelo
+    setPos(150, SUELO_Y);
 }
 
 Helicoptero::~Helicoptero() {}
@@ -43,20 +50,38 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
         }
     }
 
+<<<<<<< HEAD
+=======
+    actualizarViento(deltaTime);
+
+    // fisica vertical
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     const qreal empuje = 900.0;
-    qreal aceleracionNeta = gravedad;
+    qreal aceleracionNeta = gravedad + vientoVertical;
     if (ascensoActivo) aceleracionNeta -= empuje;
 
     velocidadVertical += aceleracionNeta * deltaTime;
     setPos(x(), y() + velocidadVertical * deltaTime);
 
     if (y() < 0) { setY(0); velocidadVertical = 0; }
-    if (y() > 480) { setY(480); velocidadVertical = 0; }
+    resolverAterrizaje();
 
+<<<<<<< HEAD
     qreal desplazamientoX = 0.0;
+=======
+    // mov horizontal
+    qreal desplazamientoX = vientoHorizontal;
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     if (derechaActiva) desplazamientoX += velocidadHorizontal;
     if (izquierdaActiva) desplazamientoX -= velocidadHorizontal;
     setX(x() + desplazamientoX * deltaTime);
+
+    const qreal anchoSprite = pixmap().width();
+    if (x() < 0.0) {
+        setX(0.0);
+    } else if (x() > 900.0 - anchoSprite) {
+        setX(900.0 - anchoSprite);
+    }
 
     const qreal anguloMaximo = 15.0;
     const qreal velocidadRotacion = 90.0;
@@ -74,7 +99,40 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
     setRotation(anguloInclinacion);
 }
 
+<<<<<<< HEAD
 bool Helicoptero::recibirDano(int cantidad) {
+=======
+void Helicoptero::resolverAterrizaje() {
+    if (y() < SUELO_Y) {
+        aterrizado = false;
+        return;
+    }
+
+    const bool acabaDeTocarSuelo = !aterrizado;
+    const qreal impactoVertical = velocidadVertical;
+    setY(SUELO_Y);
+
+    if (velocidadVertical > 0.0) {
+        velocidadVertical = 0.0;
+    }
+    aterrizado = true;
+
+    if (!acabaDeTocarSuelo) {
+        return;
+    }
+
+    if (impactoVertical > VELOCIDAD_ATERRIZAJE_SUAVE) {
+        emit aterrizajeViolento();
+        vida = 0;
+        emit vidaCambiada(vida, VIDA_MAXIMA);
+        emit destruido();
+    } else {
+        emit aterrizajeSuave();
+    }
+}
+
+void Helicoptero::recibirDano(int cantidad) {
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
     if (cantidad <= 0 || vida <= 0 || tiempoInvulnerable > 0.0) {
         return false;
     }
@@ -82,7 +140,11 @@ bool Helicoptero::recibirDano(int cantidad) {
     vida -= cantidad;
     if (vida < 0) vida = 0;
 
+<<<<<<< HEAD
     tiempoInvulnerable = 1.0;
+=======
+    tiempoInvulnerable = 1.0; // 1segundo
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 
     emit vidaCambiada(vida, vidaMaxima_);
 
@@ -92,6 +154,33 @@ bool Helicoptero::recibirDano(int cantidad) {
     return true;
 }
 
+void Helicoptero::setTurbulenciaActiva(bool activa) {
+    turbulenciaActiva = activa;
+    if (!activa) {
+        vientoHorizontal = 0.0;
+        vientoVertical = 0.0;
+    }
+}
+
+void Helicoptero::actualizarViento(qreal deltaTime) {
+    if (!turbulenciaActiva) return;
+
+    tiempoParaCambioViento -= deltaTime;
+    if (tiempoParaCambioViento <= 0.0) {
+        vientoHorizontal = QRandomGenerator::global()->bounded(-180, 181); // px/s
+        vientoVertical = QRandomGenerator::global()->bounded(-90, 91);
+        tiempoParaCambioViento = INTERVALO_CAMBIO_VIENTO;
+    }
+}
+
 int Helicoptero::vidaActual() const { return vida; }
 
+<<<<<<< HEAD
 int Helicoptero::vidaMaxima() const { return vidaMaxima_; }
+=======
+int Helicoptero::vidaMaxima() const { return VIDA_MAXIMA; }
+
+bool Helicoptero::estaAterrizado() const { return aterrizado; }
+
+qreal Helicoptero::velocidadVerticalActual() const { return velocidadVertical; }
+>>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
