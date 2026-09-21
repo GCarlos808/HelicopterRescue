@@ -8,6 +8,13 @@
 class Entidad;
 class Helicoptero;
 
+enum class ModoGeneracion {
+    Mixto,
+    Evacuacion,    // edificios + civiles (historia fase 1)
+    CombateAereo,  // drones + edificios (historia fase 2)
+    Extraccion     // mezcla agresiva (historia fase 3)
+};
+
 class GestorEntidades {
 public:
     explicit GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helicopteroJugador, qreal anchoEscena, qreal altoEscena);
@@ -21,7 +28,10 @@ public:
 
     void eliminarEntidad(Entidad *entidad);
     void dispararMisil(QPointF origen);
-    void resolverImpactosMisiles();
+    bool resolverImpactosMisiles(); // true si destruyo un drone
+    void setIntervaloSpawn(qreal segundos);
+    void setModoGeneracion(ModoGeneracion modo);
+    void setEdificiosAltos(bool activos);
 
 private:
     void agregar(Entidad *nueva);
@@ -42,6 +52,8 @@ private:
     qreal altoEscena;
     qreal tiempoDesdeUltimoSpawn;
     qreal intervaloSpawn;
+    ModoGeneracion modoGeneracion;
+    bool edificiosAltos;
 };
 
 #endif // GESTORENTIDADES_H

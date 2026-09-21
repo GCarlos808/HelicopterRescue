@@ -1,4 +1,4 @@
-QT += widgets
+QT += widgets multimedia
 
 CONFIG += c++17
 
@@ -15,6 +15,9 @@ SOURCES += \
     Misil.cpp \
     MotorJuego.cpp \
     NucleoFisico.cpp \
+    PantallaNiveles.cpp \
+    PantallaResultado.cpp \
+    ProgressManager.cpp \
     ScoreManager.cpp \
     VentanaPuntajes.cpp \
     main.cpp
@@ -32,6 +35,9 @@ HEADERS += \
     Misil.h \
     MotorJuego.h \
     NucleoFisico.h \
+    PantallaNiveles.h \
+    PantallaResultado.h \
+    ProgressManager.h \
     SavedGame.h \
     ScoreEntry.h \
     ScoreManager.h \

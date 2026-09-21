@@ -1,0 +1,3 @@
+sofia|1
+ale|4
+andre|2

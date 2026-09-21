@@ -11,7 +11,8 @@ Helicoptero::Helicoptero(QGraphicsItem *parent)
     , velocidadHorizontal(250.0)
     , izquierdaActiva(false)
     , derechaActiva(false)
-    , vida(VIDA_MAXIMA)
+    , vida(VIDA_MAXIMA_DEFAULT)
+    , vidaMaxima_(VIDA_MAXIMA_DEFAULT)
     , tiempoInvulnerable(0.0)
 {
     QPixmap sprite(":/assets/chopper1_1.png");
@@ -26,6 +27,14 @@ void Helicoptero::setAscenso(bool activo) { ascensoActivo = activo; }
 void Helicoptero::setMoverIzquierda(bool activo) { izquierdaActiva = activo; }
 void Helicoptero::setMoverDerecha(bool activo) { derechaActiva = activo; }
 
+void Helicoptero::configurarVidaMaxima(int maxima)
+{
+    vidaMaxima_ = std::max(1, maxima);
+    vida = vidaMaxima_;
+    tiempoInvulnerable = 0.0;
+    emit vidaCambiada(vida, vidaMaxima_);
+}
+
 void Helicoptero::actualizarFisica(qreal deltaTime) {
     if (tiempoInvulnerable > 0.0) {
         tiempoInvulnerable -= deltaTime;
@@ -34,7 +43,6 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
         }
     }
 
-    // fisica vertical
     const qreal empuje = 900.0;
     qreal aceleracionNeta = gravedad;
     if (ascensoActivo) aceleracionNeta -= empuje;
@@ -45,7 +53,6 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
     if (y() < 0) { setY(0); velocidadVertical = 0; }
     if (y() > 480) { setY(480); velocidadVertical = 0; }
 
-    // mov horizontal
     qreal desplazamientoX = 0.0;
     if (derechaActiva) desplazamientoX += velocidadHorizontal;
     if (izquierdaActiva) desplazamientoX -= velocidadHorizontal;
@@ -67,23 +74,24 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
     setRotation(anguloInclinacion);
 }
 
-void Helicoptero::recibirDano(int cantidad) {
+bool Helicoptero::recibirDano(int cantidad) {
     if (cantidad <= 0 || vida <= 0 || tiempoInvulnerable > 0.0) {
-        return;
+        return false;
     }
 
     vida -= cantidad;
     if (vida < 0) vida = 0;
 
-    tiempoInvulnerable = 1.0; // 1s sin recibir daño seguido
+    tiempoInvulnerable = 1.0;
 
-    emit vidaCambiada(vida, VIDA_MAXIMA);
+    emit vidaCambiada(vida, vidaMaxima_);
 
     if (vida == 0) {
         emit destruido();
     }
+    return true;
 }
 
 int Helicoptero::vidaActual() const { return vida; }
 
-int Helicoptero::vidaMaxima() const { return VIDA_MAXIMA; }
+int Helicoptero::vidaMaxima() const { return vidaMaxima_; }

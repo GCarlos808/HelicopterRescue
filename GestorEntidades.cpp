@@ -13,6 +13,8 @@ GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helic
     , escena(escenaJuego), helicoptero(helicopteroJugador)
     , anchoEscena(ancho), altoEscena(alto)
     , tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0)
+    , modoGeneracion(ModoGeneracion::Mixto)
+    , edificiosAltos(false)
 {
     entidades = new Entidad*[capacidad];
     for (int i = 0; i < capacidad; ++i) {
@@ -110,8 +112,11 @@ void GestorEntidades::generarEdificio() {
     }
 
     Edificio *nuevo = new Edificio();
-    qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150);
-    nuevo->setPixmap(nuevo->pixmap().scaled(80, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    const int alturaBase = edificiosAltos ? 160 : 100;
+    const int rangoAltura = edificiosAltos ? 180 : 150;
+    qreal alturaAleatoria = alturaBase + QRandomGenerator::global()->bounded(rangoAltura);
+    const int anchoEdificio = edificiosAltos ? 95 : 80;
+    nuevo->setPixmap(nuevo->pixmap().scaled(anchoEdificio, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     nuevo->setPos(anchoEscena, altoEscena - alturaAleatoria);
     escena->addItem(nuevo);
     agregar(nuevo);
@@ -157,6 +162,21 @@ void GestorEntidades::generarDrone() {
     agregar(nuevo);
 }
 
+void GestorEntidades::setIntervaloSpawn(qreal segundos) {
+    if (segundos < 0.4) {
+        segundos = 0.4;
+    }
+    intervaloSpawn = segundos;
+}
+
+void GestorEntidades::setModoGeneracion(ModoGeneracion modo) {
+    modoGeneracion = modo;
+}
+
+void GestorEntidades::setEdificiosAltos(bool activos) {
+    edificiosAltos = activos;
+}
+
 void GestorEntidades::intentarGenerar(qreal deltaTime) {
     tiempoDesdeUltimoSpawn += deltaTime;
     if (tiempoDesdeUltimoSpawn < intervaloSpawn) {
@@ -164,11 +184,50 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
     }
     tiempoDesdeUltimoSpawn = 0.0;
 
-    int eleccion = QRandomGenerator::global()->bounded(3); // 0, 1 o 2
-    switch (eleccion) {
-    case 0: generarEdificio(); break;
-    case 1: generarCivil(); break;
-    case 2: generarDrone(); break;
+    switch (modoGeneracion) {
+    case ModoGeneracion::Evacuacion: {
+        // 60% edificios, 40% civiles — sin drones
+        if (QRandomGenerator::global()->bounded(100) < 60) {
+            generarEdificio();
+        } else {
+            generarCivil();
+        }
+        break;
+    }
+    case ModoGeneracion::CombateAereo: {
+        // 70% drones, 30% edificios — sin civiles
+        if (QRandomGenerator::global()->bounded(100) < 70) {
+            generarDrone();
+        } else {
+            generarEdificio();
+        }
+        break;
+    }
+    case ModoGeneracion::Extraccion: {
+        // mezcla agresiva: a veces genera dos amenazas
+        const int roll = QRandomGenerator::global()->bounded(100);
+        if (roll < 35) {
+            generarEdificio();
+        } else if (roll < 55) {
+            generarCivil();
+        } else {
+            generarDrone();
+        }
+        if (QRandomGenerator::global()->bounded(100) < 35) {
+            generarDrone();
+        }
+        break;
+    }
+    case ModoGeneracion::Mixto:
+    default: {
+        int eleccion = QRandomGenerator::global()->bounded(3);
+        switch (eleccion) {
+        case 0: generarEdificio(); break;
+        case 1: generarCivil(); break;
+        case 2: generarDrone(); break;
+        }
+        break;
+    }
     }
 }
 
@@ -250,7 +309,7 @@ void GestorEntidades::dispararMisil(QPointF origen) {
     agregar(nuevo);
 }
 
-void GestorEntidades::resolverImpactosMisiles() {
+bool GestorEntidades::resolverImpactosMisiles() {
     for (int i = 0; i < cantidad; ++i) {
         if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Misil) {
             continue;
@@ -268,7 +327,6 @@ void GestorEntidades::resolverImpactosMisiles() {
             Entidad *drone = entidades[j];
             Entidad *misil = entidades[i];
 
-            // Eliminar primero el índice mayor para no invalidar el menor.
             if (j > i) {
                 eliminarEntidad(drone);
                 eliminarEntidad(misil);
@@ -276,7 +334,8 @@ void GestorEntidades::resolverImpactosMisiles() {
                 eliminarEntidad(misil);
                 eliminarEntidad(drone);
             }
-            return;
+            return true;
         }
     }
+    return false;
 }

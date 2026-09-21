@@ -17,7 +17,8 @@ public:
     void setMoverIzquierda(bool activo);
     void setMoverDerecha(bool activo);
 
-    void recibirDano(int cantidad);
+    bool recibirDano(int cantidad);
+    void configurarVidaMaxima(int maxima);
     int vidaActual() const;
     int vidaMaxima() const;
 
@@ -32,8 +33,9 @@ private:
     bool derechaActiva;
 
     int vida;
+    int vidaMaxima_;
     qreal tiempoInvulnerable;
-    static const int VIDA_MAXIMA = 3;
+    static const int VIDA_MAXIMA_DEFAULT = 3;
 
 signals:
     void vidaCambiada(int actual, int maximo);

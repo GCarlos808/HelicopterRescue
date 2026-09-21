@@ -1,10 +1,10 @@
 #include "MenuPrincipal.h"
 #include "NucleoFisico.h"
+#include "PantallaNiveles.h"
 #include "VentanaPuntajes.h"
 
 #include <QApplication>
 #include <QFrame>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -14,6 +14,9 @@
 MenuPrincipal::MenuPrincipal(QWidget* parent)
     : QMainWindow(parent)
     , gestorPuntajes_("scores.txt", "saves.txt")
+    , progreso_("progress.txt")
+    , accionPostCierre_(AccionPostCierre::MostrarMenu)
+    , nivelPendiente_(1)
 {
     setWindowTitle("Helicopter Rescue");
     setFixedSize(900, 580);
@@ -24,6 +27,7 @@ MenuPrincipal::~MenuPrincipal()
 {
     gestorPuntajes_.guardarPuntajes();
     gestorPuntajes_.guardarPartidas();
+    progreso_.guardar();
 }
 
 void MenuPrincipal::crearInterfaz()
@@ -58,12 +62,14 @@ void MenuPrincipal::crearInterfaz()
     entradaNombre_->setMinimumHeight(36);
 
     auto* botonJugar = crearBotonMenu("Jugar");
+    auto* botonNiveles = crearBotonMenu("Niveles desbloqueados");
     auto* botonPuntajes = crearBotonMenu("Puntajes y partidas");
     auto* botonInstrucciones = crearBotonMenu("Instrucciones");
     auto* botonSalir = crearBotonMenu("Salir");
     botonSalir->setObjectName("botonSalir");
 
     connect(botonJugar, &QPushButton::clicked, this, &MenuPrincipal::alJugar);
+    connect(botonNiveles, &QPushButton::clicked, this, &MenuPrincipal::alVerNiveles);
     connect(botonPuntajes, &QPushButton::clicked, this, &MenuPrincipal::alVerPuntajes);
     connect(botonInstrucciones, &QPushButton::clicked, this, &MenuPrincipal::alVerInstrucciones);
     connect(botonSalir, &QPushButton::clicked, this, &MenuPrincipal::alSalir);
@@ -72,6 +78,7 @@ void MenuPrincipal::crearInterfaz()
     layoutPanel->addWidget(entradaNombre_);
     layoutPanel->addSpacing(8);
     layoutPanel->addWidget(botonJugar);
+    layoutPanel->addWidget(botonNiveles);
     layoutPanel->addWidget(botonPuntajes);
     layoutPanel->addWidget(botonInstrucciones);
     layoutPanel->addWidget(botonSalir);
@@ -126,9 +133,23 @@ QPushButton* MenuPrincipal::crearBotonMenu(const QString& texto)
     return boton;
 }
 
+QString MenuPrincipal::nombrePilotoActual() const
+{
+    return entradaNombre_->text().trimmed();
+}
+
+void MenuPrincipal::conectarSenalesJuego(NucleoFisico* juego)
+{
+    connect(juego, &QObject::destroyed, this, &MenuPrincipal::alCerrarJuego);
+    connect(juego, &NucleoFisico::solicitarReiniciar, this, &MenuPrincipal::alProgramarReinicio);
+    connect(juego, &NucleoFisico::solicitarNivel, this, &MenuPrincipal::alProgramarNivel);
+    connect(juego, &NucleoFisico::solicitarNiveles, this, &MenuPrincipal::alProgramarNiveles);
+    connect(juego, &NucleoFisico::solicitarMenu, this, &MenuPrincipal::alProgramarMenu);
+}
+
 void MenuPrincipal::alJugar()
 {
-    const QString nombre = entradaNombre_->text().trimmed();
+    const QString nombre = nombrePilotoActual();
     if (nombre.isEmpty()) {
         QMessageBox::warning(this, "Nombre requerido",
                              "Escribe tu nombre de piloto antes de jugar.");
@@ -136,18 +157,85 @@ void MenuPrincipal::alJugar()
         return;
     }
 
-    if (ventanaJuego_) {
-        ventanaJuego_->raise();
-        ventanaJuego_->activateWindow();
+    progreso_.seleccionarPiloto(nombre.toStdString());
+    // Un piloto nuevo solo tiene el nivel 1; si ya avanzo, continua en su maximo.
+    alIniciarNivel(progreso_.nivelMaximoDesbloqueado());
+}
+
+void MenuPrincipal::alVerNiveles()
+{
+    const QString nombre = nombrePilotoActual();
+    if (nombre.isEmpty()) {
+        QMessageBox::warning(this, "Nombre requerido",
+                             "Escribe tu nombre de piloto antes de elegir nivel.");
+        entradaNombre_->setFocus();
         return;
     }
 
-    ventanaJuego_ = new NucleoFisico(nullptr);
-    ventanaJuego_->setAttribute(Qt::WA_DeleteOnClose);
-    ventanaJuego_->setWindowTitle("Helicopter Rescue - " + nombre);
-    ventanaJuego_->setFixedSize(900, 580);
+    progreso_.seleccionarPiloto(nombre.toStdString());
 
-    connect(ventanaJuego_, &QObject::destroyed, this, &MenuPrincipal::alCerrarJuego);
+    if (ventanaNiveles_) {
+        ventanaNiveles_->close();
+        ventanaNiveles_ = nullptr;
+    }
+
+    ventanaNiveles_ = new PantallaNiveles(&progreso_, this);
+    ventanaNiveles_->setAttribute(Qt::WA_DeleteOnClose);
+    connect(ventanaNiveles_, &PantallaNiveles::nivelElegido, this, &MenuPrincipal::alIniciarNivel);
+    ventanaNiveles_->exec();
+}
+
+void MenuPrincipal::alProgramarReinicio(int nivel)
+{
+    accionPostCierre_ = AccionPostCierre::AbrirNivel;
+    nivelPendiente_ = nivel;
+}
+
+void MenuPrincipal::alProgramarNivel(int nivel)
+{
+    accionPostCierre_ = AccionPostCierre::AbrirNivel;
+    nivelPendiente_ = nivel;
+}
+
+void MenuPrincipal::alProgramarNiveles()
+{
+    accionPostCierre_ = AccionPostCierre::AbrirNiveles;
+}
+
+void MenuPrincipal::alProgramarMenu()
+{
+    accionPostCierre_ = AccionPostCierre::MostrarMenu;
+}
+
+void MenuPrincipal::alIniciarNivel(int nivel)
+{
+    const QString nombre = nombrePilotoActual();
+    if (nombre.isEmpty()) {
+        QMessageBox::warning(this, "Nombre requerido",
+                             "Escribe tu nombre de piloto antes de jugar.");
+        entradaNombre_->setFocus();
+        return;
+    }
+
+    progreso_.seleccionarPiloto(nombre.toStdString());
+
+    if (!progreso_.estaDesbloqueado(nivel)) {
+        QMessageBox::information(this, "Nivel bloqueado",
+                                 "Ese nivel aun no esta desbloqueado para este piloto.");
+        return;
+    }
+
+    if (ventanaJuego_) {
+        accionPostCierre_ = AccionPostCierre::AbrirNivel;
+        nivelPendiente_ = nivel;
+        ventanaJuego_->close();
+        return;
+    }
+
+    accionPostCierre_ = AccionPostCierre::MostrarMenu;
+    ventanaJuego_ = new NucleoFisico(nombre, nivel, &gestorPuntajes_, &progreso_, nullptr);
+    ventanaJuego_->setAttribute(Qt::WA_DeleteOnClose);
+    conectarSenalesJuego(ventanaJuego_);
 
     hide();
     ventanaJuego_->show();
@@ -173,11 +261,16 @@ void MenuPrincipal::alVerInstrucciones()
         this,
         "Instrucciones",
         "Objetivo:\n"
-        "Controla el helicoptero, evita obstaculos y rescata personas.\n\n"
+        "Controla el helicoptero, evita obstaculos y rescata civiles.\n\n"
+        "Niveles:\n"
+        "- Nivel 1: rescata 3 civiles\n"
+        "- Nivel 2: rescata 5 civiles\n"
+        "- Nivel 3: rescata 7 civiles\n"
+        "- Historia (Nivel 4): 3 fases con objetivos distintos,\n"
+        "  8 de vida y obstaculos variables\n\n"
         "Controles:\n"
-        "- Flecha Arriba: ascender\n"
-        "- Suelta la tecla: la gravedad hace caer la aeronave\n\n"
-        "Hay 3 niveles de dificultad.\n"
+        "- Flechas: mover / ascender\n"
+        "- Espacio: disparar misil\n"
         );
 }
 
@@ -189,7 +282,21 @@ void MenuPrincipal::alSalir()
 void MenuPrincipal::alCerrarJuego()
 {
     ventanaJuego_ = nullptr;
+
+    const AccionPostCierre accion = accionPostCierre_;
+    const int nivel = nivelPendiente_;
+    accionPostCierre_ = AccionPostCierre::MostrarMenu;
+
+    if (accion == AccionPostCierre::AbrirNivel) {
+        alIniciarNivel(nivel);
+        return;
+    }
+
     show();
     raise();
     activateWindow();
+
+    if (accion == AccionPostCierre::AbrirNiveles) {
+        alVerNiveles();
+    }
 }

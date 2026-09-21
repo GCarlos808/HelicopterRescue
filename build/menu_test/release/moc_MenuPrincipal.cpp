@@ -41,23 +41,48 @@ template <> constexpr inline auto MenuPrincipal::qt_create_metaobjectdata<qt_met
         "MenuPrincipal",
         "alJugar",
         "",
+        "alVerNiveles",
         "alVerPuntajes",
         "alVerInstrucciones",
         "alSalir",
-        "alCerrarJuego"
+        "alCerrarJuego",
+        "alIniciarNivel",
+        "nivel",
+        "alProgramarReinicio",
+        "alProgramarNivel",
+        "alProgramarNiveles",
+        "alProgramarMenu"
     };
 
     QtMocHelpers::UintData qt_methods {
         // Slot 'alJugar'
         QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'alVerPuntajes'
+        // Slot 'alVerNiveles'
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'alVerInstrucciones'
+        // Slot 'alVerPuntajes'
         QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'alSalir'
+        // Slot 'alVerInstrucciones'
         QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'alCerrarJuego'
+        // Slot 'alSalir'
         QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'alCerrarJuego'
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'alIniciarNivel'
+        QtMocHelpers::SlotData<void(int)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 9 },
+        }}),
+        // Slot 'alProgramarReinicio'
+        QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 9 },
+        }}),
+        // Slot 'alProgramarNivel'
+        QtMocHelpers::SlotData<void(int)>(11, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 9 },
+        }}),
+        // Slot 'alProgramarNiveles'
+        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'alProgramarMenu'
+        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -82,14 +107,19 @@ void MenuPrincipal::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->alJugar(); break;
-        case 1: _t->alVerPuntajes(); break;
-        case 2: _t->alVerInstrucciones(); break;
-        case 3: _t->alSalir(); break;
-        case 4: _t->alCerrarJuego(); break;
+        case 1: _t->alVerNiveles(); break;
+        case 2: _t->alVerPuntajes(); break;
+        case 3: _t->alVerInstrucciones(); break;
+        case 4: _t->alSalir(); break;
+        case 5: _t->alCerrarJuego(); break;
+        case 6: _t->alIniciarNivel((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 7: _t->alProgramarReinicio((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 8: _t->alProgramarNivel((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 9: _t->alProgramarNiveles(); break;
+        case 10: _t->alProgramarMenu(); break;
         default: ;
         }
     }
-    (void)_a;
 }
 
 const QMetaObject *MenuPrincipal::metaObject() const
@@ -111,14 +141,14 @@ int MenuPrincipal::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 11;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 11)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 11;
     }
     return _id;
 }

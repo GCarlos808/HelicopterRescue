@@ -1,3 +1,5 @@
+debug/Civil.o
+debug/Drone.o
 debug/Edificio.o
 debug/Entidad.o
 debug/FondoScroll.o
@@ -5,8 +7,12 @@ debug/GestorEntidades.o
 debug/Helicoptero.o
 debug/Inputs.o
 debug/MenuPrincipal.o
+debug/Misil.o
 debug/MotorJuego.o
 debug/NucleoFisico.o
+debug/PantallaNiveles.o
+debug/PantallaResultado.o
+debug/ProgressManager.o
 debug/ScoreManager.o
 debug/VentanaPuntajes.o
 debug/main.o
@@ -16,4 +22,6 @@ debug/moc_Inputs.o
 debug/moc_MenuPrincipal.o
 debug/moc_MotorJuego.o
 debug/moc_NucleoFisico.o
+debug/moc_PantallaNiveles.o
+debug/moc_PantallaResultado.o
 debug/moc_VentanaPuntajes.o
