@@ -173,11 +173,18 @@ void MenuPrincipal::alVerInstrucciones()
         this,
         "Instrucciones",
         "Objetivo:\n"
-        "Controla el helicoptero, evita obstaculos y rescata personas.\n\n"
+        "Despega, avanza por los 11 sectores del mapa, rescata civiles\n"
+        "y aterriza en el hangar final para completar el nivel 1.\n"
+        "Cada civil rescatado suma 100 puntos.\n\n"
+        "Rescate:\n"
+        "- Debes aterrizar con suavidad cerca de un civil.\n"
+        "- Si tocas el suelo a gran velocidad, pierdes toda la vida.\n"
+        "- En el sector 11, aterriza en el hangar para entregar a los civiles.\n\n"
         "Controles:\n"
-        "- Flecha Arriba: ascender\n"
-        "- Suelta la tecla: la gravedad hace caer la aeronave\n\n"
-        "Hay 3 niveles de dificultad.\n"
+        "- Flecha Arriba: despegar / ascender\n"
+        "- Flechas Izquierda/Derecha: moverse e inclinarse\n"
+        "- Espacio: disparar (cooldown de 3 segundos)\n"
+        "- El escenario no avanza hasta que despegues.\n"
         );
 }
 

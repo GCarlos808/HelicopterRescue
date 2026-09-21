@@ -15,6 +15,8 @@ public:
 
     void actualizar(qreal deltaTime);
     void intentarGenerar(qreal deltaTime);
+    void setGeneracionActiva(bool activa);
+    bool generacionActiva() const;
     Entidad *colisionPeligro(QGraphicsItem *objetivo) const;
     void rescatar(Entidad *civil);
     Entidad *civilCercano(QGraphicsItem *objetivo, qreal radio) const;
@@ -22,6 +24,8 @@ public:
     void eliminarEntidad(Entidad *entidad);
     void dispararMisil(QPointF origen);
     void resolverImpactosMisiles();
+
+    void establecerNivel(int nivel);
 
 private:
     void agregar(Entidad *nueva);
@@ -42,6 +46,12 @@ private:
     qreal altoEscena;
     qreal tiempoDesdeUltimoSpawn;
     qreal intervaloSpawn;
+    bool generarActivo;
+
+    void generarSoldado();
+    void procesarDisparosEnemigos();
+
+    int nivelActual = 1;
 };
 
 #endif // GESTORENTIDADES_H

@@ -21,7 +21,12 @@ public:
     int vidaActual() const;
     int vidaMaxima() const;
 
+    bool estaAterrizado() const;
+    qreal velocidadVerticalActual() const;
+
 private:
+    void resolverAterrizaje();
+
     qreal velocidadVertical;
     qreal gravedad;
     qreal anguloInclinacion;
@@ -33,11 +38,16 @@ private:
 
     int vida;
     qreal tiempoInvulnerable;
+    bool aterrizado;
     static const int VIDA_MAXIMA = 3;
+    static constexpr qreal SUELO_Y = 480.0;
+    static constexpr qreal VELOCIDAD_ATERRIZAJE_SUAVE = 200.0;
 
 signals:
     void vidaCambiada(int actual, int maximo);
     void destruido();
+    void aterrizajeSuave();
+    void aterrizajeViolento();
 };
 
 #endif // HELICOPTERO_H

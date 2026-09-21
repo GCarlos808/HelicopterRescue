@@ -4,6 +4,8 @@
 #include "Civil.h"
 #include "Drone.h"
 #include "Misil.h"
+#include "MisilEnemigo.h"
+#include "Soldado.h"
 #include <QLineF>
 #include <QRandomGenerator>
 #include <algorithm>
@@ -13,6 +15,7 @@ GestorEntidades::GestorEntidades(QGraphicsScene *escenaJuego, Helicoptero *helic
     , escena(escenaJuego), helicoptero(helicopteroJugador)
     , anchoEscena(ancho), altoEscena(alto)
     , tiempoDesdeUltimoSpawn(0.0), intervaloSpawn(2.0)
+    , generarActivo(false)
 {
     entidades = new Entidad*[capacidad];
     for (int i = 0; i < capacidad; ++i) {
@@ -97,19 +100,15 @@ void GestorEntidades::liberarSalientes() {
 
 void GestorEntidades::actualizar(qreal deltaTime) {
     for (int i = 0; i < cantidad; ++i) {
-        if (entidades[i]) {
-            entidades[i]->actualizar(deltaTime);
-        }
+        if (entidades[i]) entidades[i]->actualizar(deltaTime);
     }
+    procesarDisparosEnemigos();
     liberarSalientes();
 }
 
 void GestorEntidades::generarEdificio() {
-    if (!escena) {
-        return;
-    }
-
-    Edificio *nuevo = new Edificio();
+    if (!escena) return;
+    Edificio *nuevo = new Edificio(nivelActual); // ahora recibe el nivel
     qreal alturaAleatoria = 100 + QRandomGenerator::global()->bounded(150);
     nuevo->setPixmap(nuevo->pixmap().scaled(80, int(alturaAleatoria), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     nuevo->setPos(anchoEscena, altoEscena - alturaAleatoria);
@@ -153,17 +152,31 @@ void GestorEntidades::generarDrone() {
     agregar(nuevo);
 }
 
+void GestorEntidades::setGeneracionActiva(bool activa) {
+    generarActivo = activa;
+}
+
+bool GestorEntidades::generacionActiva() const {
+    return generarActivo;
+}
+
 void GestorEntidades::intentarGenerar(qreal deltaTime) {
+    if (!generarActivo) return;
     tiempoDesdeUltimoSpawn += deltaTime;
-    if (tiempoDesdeUltimoSpawn < intervaloSpawn) {
-        return;
-    }
+    if (tiempoDesdeUltimoSpawn < intervaloSpawn) return;
     tiempoDesdeUltimoSpawn = 0.0;
 
-    int eleccion = QRandomGenerator::global()->bounded(3); // 0, 1 o 2
+    int eleccion = QRandomGenerator::global()->bounded(3);
     switch (eleccion) {
     case 0: generarEdificio(); break;
-    case 1: generarCivil(); break;
+    case 1:
+        //nivel 2 la mitad de las veces aparece un Soldado en vez de un Civil
+        if (nivelActual >= 2 && QRandomGenerator::global()->bounded(2) == 0) {
+            generarSoldado();
+        } else {
+            generarCivil();
+        }
+        break;
     case 2: generarDrone(); break;
     }
 }
@@ -264,7 +277,7 @@ void GestorEntidades::resolverImpactosMisiles() {
             Entidad *drone = entidades[j];
             Entidad *misil = entidades[i];
 
-            // Eliminar primero el índice mayor para no invalidar el menor.
+            // eliminar primero el índice mayor para no invalidar el menor.
             if (j > i) {
                 eliminarEntidad(drone);
                 eliminarEntidad(misil);
@@ -274,5 +287,34 @@ void GestorEntidades::resolverImpactosMisiles() {
             }
             return;
         }
+    }
+}
+
+void GestorEntidades::establecerNivel(int nivel) {
+    nivelActual = nivel;
+}
+
+void GestorEntidades::generarSoldado() {
+    if (!escena) return;
+    Soldado *nuevo = new Soldado(nivelActual);
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    nuevo->setPos(anchoEscena, altoEscena - altoSprite - 40.0);
+    escena->addItem(nuevo);
+    agregar(nuevo);
+}
+
+void GestorEntidades::procesarDisparosEnemigos() {
+    if (!helicoptero) return;
+    for (int i = 0; i < cantidad; ++i) {
+        if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Enemigo) continue;
+
+        Soldado *soldado = dynamic_cast<Soldado*>(entidades[i]);
+        if (!soldado || !soldado->listoParaDisparar()) continue;
+
+        MisilEnemigo *proyectil = new MisilEnemigo();
+        proyectil->setPos(soldado->x(), soldado->y() + soldado->pixmap().height() / 2.0);
+        escena->addItem(proyectil);
+        agregar(proyectil);
+        soldado->reiniciarCooldownDisparo();
     }
 }

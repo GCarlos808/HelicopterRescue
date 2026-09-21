@@ -62,9 +62,11 @@ SOURCES       = ../../Civil.cpp \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
 		../../Misil.cpp \
+		../../MisilEnemigo.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
 		../../ScoreManager.cpp \
+		../../Soldado.cpp \
 		../../VentanaPuntajes.cpp \
 		../../main.cpp qrc_resources.cpp \
 		moc_Helicoptero.cpp \
@@ -83,9 +85,11 @@ OBJECTS       = Civil.o \
 		Inputs.o \
 		MenuPrincipal.o \
 		Misil.o \
+		MisilEnemigo.o \
 		MotorJuego.o \
 		NucleoFisico.o \
 		ScoreManager.o \
+		Soldado.o \
 		VentanaPuntajes.o \
 		main.o \
 		qrc_resources.o \
@@ -383,11 +387,13 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		../../Inputs.h \
 		../../MenuPrincipal.h \
 		../../Misil.h \
+		../../MisilEnemigo.h \
 		../../MotorJuego.h \
 		../../NucleoFisico.h \
 		../../SavedGame.h \
 		../../ScoreEntry.h \
 		../../ScoreManager.h \
+		../../Soldado.h \
 		../../VentanaPuntajes.h ../../Civil.cpp \
 		../../Drone.cpp \
 		../../Edificio.cpp \
@@ -398,9 +404,11 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
 		../../Misil.cpp \
+		../../MisilEnemigo.cpp \
 		../../MotorJuego.cpp \
 		../../NucleoFisico.cpp \
 		../../ScoreManager.cpp \
+		../../Soldado.cpp \
 		../../VentanaPuntajes.cpp \
 		../../main.cpp
 QMAKE_TARGET  = HelicopterRescue
@@ -997,8 +1005,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../Misil.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../VentanaPuntajes.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../Misil.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../Misil.h ../../MisilEnemigo.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../Soldado.h ../../VentanaPuntajes.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../Misil.cpp ../../MisilEnemigo.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../Soldado.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1030,35 +1038,62 @@ qrc_resources.cpp: ../../resources.qrc \
 		../../assets/sky1_6.png \
 		../../assets/landscape1_2.png \
 		../../assets/sky1_10.png \
+		../../assets/Landscape\ 2-10.png \
 		../../assets/sky1_9.png \
 		../../assets/rescue_1.png \
+		../../assets/Sky\ 2-9.png \
 		../../assets/rescue_3.png \
+		../../assets/Sky\ 2-6.png \
 		../../assets/obstacle1_3.png \
 		../../assets/sky1_8.png \
 		../../assets/landscape1_9.png \
+		../../assets/Landscape\ 2-2.png \
+		../../assets/Sky\ 2-11.png \
+		../../assets/Sky\ 2-8.png \
 		../../assets/landscape1_8.png \
 		../../assets/landscape1_5.png \
+		../../assets/Landscape\ 2-3.png \
+		../../assets/Soldier.png \
+		../../assets/Landscape\ 2-11.png \
 		../../assets/landscape1_10.png \
 		../../assets/drone.png \
 		../../assets/sky1_4.png \
+		../../assets/Obstacle\ 2-2.png \
+		../../assets/Landscape\ 2-7.png \
+		../../assets/Sky\ 2-2.png \
+		../../assets/Landscape\ 2-5.png \
+		../../assets/Landscape\ 2-9.png \
 		../../assets/obstacle1_2.png \
+		../../assets/Landscape\ 2-4.png \
 		../../assets/obstacle1_1.png \
 		../../assets/obstacle1_4.png \
+		../../assets/Landscape\ 2-1.png \
+		../../assets/Sky\ 2-5.png \
+		../../assets/Sky\ 2-10.png \
 		../../assets/landscape1_11.png \
 		../../assets/sky1_5.png \
 		../../assets/sky1_11.png \
 		../../assets/chopper1_1.png \
 		../../assets/missile.png \
+		../../assets/Obstacle\ 2-3.png \
 		../../assets/landscape1_3.png \
 		../../assets/landscape1_1.png \
+		../../assets/Landscape\ 2-8.png \
 		../../assets/landscape1_6.png \
 		../../assets/sky1_3.png \
+		../../assets/Landscape\ 2-6.png \
+		../../assets/Obstacle\ 2-4.png \
+		../../assets/Obstacle\ 2-1.png \
 		../../assets/landscape1_7.png \
 		../../assets/landscape1_4.png \
 		../../assets/rescue_2.png \
 		../../assets/sky1_2.png \
 		../../assets/sky1_7.png \
-		../../assets/sky1_1.png
+		../../assets/Sky\ 2-1.png \
+		../../assets/Sky\ 2-4.png \
+		../../assets/Sky\ 2-3.png \
+		../../assets/sky1_1.png \
+		../../assets/Sky\ 2-7.png
 	/usr/lib/qt6/rcc -name resources ../../resources.qrc -o qrc_resources.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
@@ -1151,7 +1186,9 @@ GestorEntidades.o: ../../GestorEntidades.cpp ../../GestorEntidades.h \
 		../../Edificio.h \
 		../../Civil.h \
 		../../Drone.h \
-		../../Misil.h
+		../../Misil.h \
+		../../MisilEnemigo.h \
+		../../Soldado.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GestorEntidades.o ../../GestorEntidades.cpp
 
 Helicoptero.o: ../../Helicoptero.cpp ../../Helicoptero.h
@@ -1177,6 +1214,10 @@ Misil.o: ../../Misil.cpp ../../Misil.h \
 		../../Entidad.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Misil.o ../../Misil.cpp
 
+MisilEnemigo.o: ../../MisilEnemigo.cpp ../../MisilEnemigo.h \
+		../../Entidad.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MisilEnemigo.o ../../MisilEnemigo.cpp
+
 MotorJuego.o: ../../MotorJuego.cpp ../../MotorJuego.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MotorJuego.o ../../MotorJuego.cpp
 
@@ -1193,6 +1234,10 @@ ScoreManager.o: ../../ScoreManager.cpp ../../ScoreManager.h \
 		../../ScoreEntry.h \
 		../../SavedGame.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ScoreManager.o ../../ScoreManager.cpp
+
+Soldado.o: ../../Soldado.cpp ../../Soldado.h \
+		../../Entidad.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Soldado.o ../../Soldado.cpp
 
 VentanaPuntajes.o: ../../VentanaPuntajes.cpp ../../VentanaPuntajes.h \
 		../../ScoreManager.h \

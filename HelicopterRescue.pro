@@ -13,9 +13,11 @@ SOURCES += \
     Inputs.cpp \
     MenuPrincipal.cpp \
     Misil.cpp \
+    MisilEnemigo.cpp \
     MotorJuego.cpp \
     NucleoFisico.cpp \
     ScoreManager.cpp \
+    Soldado.cpp \
     VentanaPuntajes.cpp \
     main.cpp
 
@@ -30,11 +32,13 @@ HEADERS += \
     Inputs.h \
     MenuPrincipal.h \
     Misil.h \
+    MisilEnemigo.h \
     MotorJuego.h \
     NucleoFisico.h \
     SavedGame.h \
     ScoreEntry.h \
     ScoreManager.h \
+    Soldado.h \
     VentanaPuntajes.h
 
 # Default rules for deployment.
