@@ -32,32 +32,32 @@
         <file>assets/landscape1_1.png</file>
         <file>assets/landscape1_2.png</file>
         <file>assets/landscape1_3.png</file>
-        <file>assets/Landscape 2-11.png</file>
-        <file>assets/Landscape 2-10.png</file>
-        <file>assets/Landscape 2-9.png</file>
-        <file>assets/Landscape 2-8.png</file>
-        <file>assets/Landscape 2-7.png</file>
-        <file>assets/Landscape 2-6.png</file>
-        <file>assets/Landscape 2-5.png</file>
-        <file>assets/Landscape 2-4.png</file>
-        <file>assets/Landscape 2-3.png</file>
-        <file>assets/Landscape 2-2.png</file>
-        <file>assets/Landscape 2-1.png</file>
-        <file>assets/Sky 2-11.png</file>
-        <file>assets/Sky 2-10.png</file>
-        <file>assets/Sky 2-9.png</file>
-        <file>assets/Sky 2-8.png</file>
-        <file>assets/Sky 2-7.png</file>
-        <file>assets/Sky 2-6.png</file>
-        <file>assets/Sky 2-5.png</file>
-        <file>assets/Sky 2-4.png</file>
-        <file>assets/Sky 2-3.png</file>
-        <file>assets/Sky 2-2.png</file>
-        <file>assets/Sky 2-1.png</file>
-        <file>assets/Soldier.png</file>
-        <file>assets/Obstacle 2-3.png</file>
-        <file>assets/Obstacle 2-2.png</file>
-        <file>assets/Obstacle 2-1.png</file>
-        <file>assets/Obstacle 2-4.png</file>
+        <file>assets/landscape2_11.png</file>
+        <file>assets/landscape2_10.png</file>
+        <file>assets/landscape2_9.png</file>
+        <file>assets/landscape2_8.png</file>
+        <file>assets/landscape2_7.png</file>
+        <file>assets/landscape2_6.png</file>
+        <file>assets/landscape2_5.png</file>
+        <file>assets/landscape2_4.png</file>
+        <file>assets/landscape2_3.png</file>
+        <file>assets/landscape2_2.png</file>
+        <file>assets/landscape2_1.png</file>
+        <file>assets/sky2_11.png</file>
+        <file>assets/sky2_10.png</file>
+        <file>assets/sky2_9.png</file>
+        <file>assets/sky2_8.png</file>
+        <file>assets/sky2_7.png</file>
+        <file>assets/sky2_6.png</file>
+        <file>assets/sky2_5.png</file>
+        <file>assets/sky2_4.png</file>
+        <file>assets/sky2_3.png</file>
+        <file>assets/sky2_2.png</file>
+        <file>assets/sky2_1.png</file>
+        <file>assets/soldier.png</file>
+        <file>assets/obstacle2_3.png</file>
+        <file>assets/obstacle2_2.png</file>
+        <file>assets/obstacle2_1.png</file>
+        <file>assets/obstacle2_4.png</file>
     </qresource>
 </RCC>

@@ -4,7 +4,7 @@
 #include <QPen>
 #include <QtGlobal>
 
-FondoScroll::FondoScroll(QGraphicsScene *escenaJuego, qreal ancho, qreal alto)
+FondoScroll::FondoScroll(QGraphicsScene *escenaJuego, qreal ancho, qreal alto, int nivelInicial)
     : escena(escenaJuego)
     , zonaHangar(nullptr)
     , textoHangar(nullptr)
@@ -17,6 +17,7 @@ FondoScroll::FondoScroll(QGraphicsScene *escenaJuego, qreal ancho, qreal alto)
     , velocidadCielo(40.0)
     , velocidadTerreno(200.0)
     , activo(false)
+    , nivelActual(nivelInicial > 0 ? nivelInicial : 1)
 {
     for (int i = 0; i < NUM_SEGMENTOS; ++i) {
         cielos[i] = nullptr;
@@ -169,6 +170,7 @@ void FondoScroll::actualizar(qreal deltaTime) {
 
     aplicarDesplazamientos();
 }
+
 void FondoScroll::recargarTexturas() {
     const int altoTerreno = int(altoEscena * 0.3);
     for (int i = 0; i < NUM_SEGMENTOS; ++i) {
@@ -179,17 +181,24 @@ void FondoScroll::recargarTexturas() {
         QPixmap terrenoPix = cargarPixmap(
             QString(":/assets/landscape%1_%2.png").arg(nivelActual).arg(numero),
             int(anchoSegmento), altoTerreno);
-        if (cielos[i]) cielos[i]->setPixmap(cieloPix);
-        if (terrenos[i]) terrenos[i]->setPixmap(terrenoPix);
+        if (cielos[i]) {
+            cielos[i]->setPixmap(cieloPix);
+        }
+        if (terrenos[i]) {
+            terrenos[i]->setPixmap(terrenoPix);
+        }
     }
 }
 
 void FondoScroll::establecerNivel(int nivel) {
-    nivelActual = nivel;
+    nivelActual = nivel > 0 ? nivel : 1;
     recargarTexturas();
     desplazamientoCielo = 0.0;
     desplazamientoTerreno = 0.0;
-    aplicarDesplazamientos(); //zona de hangar al inicio del recorrido
+    activo = false;
+    aplicarDesplazamientos();
 }
 
-int FondoScroll::nivel() const { return nivelActual; }
+int FondoScroll::nivel() const {
+    return nivelActual;
+}

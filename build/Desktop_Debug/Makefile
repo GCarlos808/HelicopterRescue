@@ -1035,65 +1035,65 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resources.cpp
 qrc_resources.cpp: ../../resources.qrc \
 		/usr/lib/qt6/rcc \
+		../../assets/sky2_1.png \
 		../../assets/sky1_6.png \
 		../../assets/landscape1_2.png \
+		../../assets/landscape2_2.png \
 		../../assets/sky1_10.png \
-		../../assets/Landscape\ 2-10.png \
 		../../assets/sky1_9.png \
 		../../assets/rescue_1.png \
-		../../assets/Sky\ 2-9.png \
+		../../assets/landscape2_11.png \
+		../../assets/obstacle2_3.png \
+		../../assets/sky2_9.png \
 		../../assets/rescue_3.png \
-		../../assets/Sky\ 2-6.png \
 		../../assets/obstacle1_3.png \
 		../../assets/sky1_8.png \
 		../../assets/landscape1_9.png \
-		../../assets/Landscape\ 2-2.png \
-		../../assets/Sky\ 2-11.png \
-		../../assets/Sky\ 2-8.png \
+		../../assets/landscape2_7.png \
+		../../assets/landscape2_3.png \
+		../../assets/sky2_3.png \
+		../../assets/sky2_7.png \
 		../../assets/landscape1_8.png \
 		../../assets/landscape1_5.png \
-		../../assets/Landscape\ 2-3.png \
-		../../assets/Soldier.png \
-		../../assets/Landscape\ 2-11.png \
+		../../assets/landscape2_4.png \
+		../../assets/sky2_5.png \
+		../../assets/sky2_2.png \
 		../../assets/landscape1_10.png \
+		../../assets/sky2_6.png \
+		../../assets/sky2_4.png \
 		../../assets/drone.png \
 		../../assets/sky1_4.png \
-		../../assets/Obstacle\ 2-2.png \
-		../../assets/Landscape\ 2-7.png \
-		../../assets/Sky\ 2-2.png \
-		../../assets/Landscape\ 2-5.png \
-		../../assets/Landscape\ 2-9.png \
+		../../assets/obstacle2_1.png \
+		../../assets/obstacle2_4.png \
 		../../assets/obstacle1_2.png \
-		../../assets/Landscape\ 2-4.png \
+		../../assets/landscape2_10.png \
 		../../assets/obstacle1_1.png \
 		../../assets/obstacle1_4.png \
-		../../assets/Landscape\ 2-1.png \
-		../../assets/Sky\ 2-5.png \
-		../../assets/Sky\ 2-10.png \
+		../../assets/landscape2_9.png \
+		../../assets/obstacle2_2.png \
+		../../assets/landscape2_8.png \
+		../../assets/sky2_8.png \
+		../../assets/sky2_10.png \
 		../../assets/landscape1_11.png \
 		../../assets/sky1_5.png \
 		../../assets/sky1_11.png \
 		../../assets/chopper1_1.png \
 		../../assets/missile.png \
-		../../assets/Obstacle\ 2-3.png \
+		../../assets/landscape2_6.png \
+		../../assets/landscape2_5.png \
 		../../assets/landscape1_3.png \
 		../../assets/landscape1_1.png \
-		../../assets/Landscape\ 2-8.png \
 		../../assets/landscape1_6.png \
 		../../assets/sky1_3.png \
-		../../assets/Landscape\ 2-6.png \
-		../../assets/Obstacle\ 2-4.png \
-		../../assets/Obstacle\ 2-1.png \
 		../../assets/landscape1_7.png \
 		../../assets/landscape1_4.png \
 		../../assets/rescue_2.png \
 		../../assets/sky1_2.png \
 		../../assets/sky1_7.png \
-		../../assets/Sky\ 2-1.png \
-		../../assets/Sky\ 2-4.png \
-		../../assets/Sky\ 2-3.png \
-		../../assets/sky1_1.png \
-		../../assets/Sky\ 2-7.png
+		../../assets/landscape2_1.png \
+		../../assets/soldier.png \
+		../../assets/sky2_11.png \
+		../../assets/sky1_1.png
 	/usr/lib/qt6/rcc -name resources ../../resources.qrc -o qrc_resources.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
