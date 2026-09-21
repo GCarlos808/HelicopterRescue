@@ -42,11 +42,8 @@ private:
     int vida;
     int vidaMaxima_;
     qreal tiempoInvulnerable;
-<<<<<<< HEAD
     static const int VIDA_MAXIMA_DEFAULT = 3;
-=======
     bool aterrizado;
-    static const int VIDA_MAXIMA = 3;
     static constexpr qreal SUELO_Y = 480.0;
     static constexpr qreal VELOCIDAD_ATERRIZAJE_SUAVE = 200.0;
 
@@ -57,7 +54,6 @@ private:
     qreal vientoVertical;
     qreal tiempoParaCambioViento;
     static constexpr qreal INTERVALO_CAMBIO_VIENTO = 1.5;
->>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 
 signals:
     void vidaCambiada(int actual, int maximo);

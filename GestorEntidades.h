@@ -10,9 +10,9 @@ class Helicoptero;
 
 enum class ModoGeneracion {
     Mixto,
-    Evacuacion,    // edificios + civiles (historia fase 1)
-    CombateAereo,  // drones + edificios (historia fase 2)
-    Extraccion     // mezcla agresiva (historia fase 3)
+    Evacuacion,
+    CombateAereo,
+    Extraccion
 };
 
 class GestorEntidades {
@@ -56,10 +56,8 @@ private:
     qreal altoEscena;
     qreal tiempoDesdeUltimoSpawn;
     qreal intervaloSpawn;
-<<<<<<< HEAD
     ModoGeneracion modoGeneracion;
     bool edificiosAltos;
-=======
     bool generarActivo;
 
     void generarSoldado();
@@ -67,7 +65,6 @@ private:
 
     int nivelActual = 1;
     void generarHelicopteroEnemigo();
->>>>>>> 09785195295aaf0a38e5503e88c25b8dd4d5e2bc
 };
 
 #endif // GESTORENTIDADES_H
