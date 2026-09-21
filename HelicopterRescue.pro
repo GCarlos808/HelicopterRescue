@@ -10,6 +10,7 @@ SOURCES += \
     FondoScroll.cpp \
     GestorEntidades.cpp \
     Helicoptero.cpp \
+    HelicopteroEnemigo.cpp \
     Inputs.cpp \
     MenuPrincipal.cpp \
     Misil.cpp \
@@ -23,12 +24,14 @@ SOURCES += \
 
 HEADERS += \
     Civil.h \
+    Disparable.h \
     Drone.h \
     Edificio.h \
     Entidad.h \
     FondoScroll.h \
     GestorEntidades.h \
     Helicoptero.h \
+    HelicopteroEnemigo.h \
     Inputs.h \
     MenuPrincipal.h \
     Misil.h \

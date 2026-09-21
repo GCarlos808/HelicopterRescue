@@ -59,5 +59,28 @@
         <file>assets/obstacle2_2.png</file>
         <file>assets/obstacle2_1.png</file>
         <file>assets/obstacle2_4.png</file>
+        <file>assets/landscape3_11.png</file>
+        <file>assets/landscape3_10.png</file>
+        <file>assets/landscape3_9.png</file>
+        <file>assets/landscape3_8.png</file>
+        <file>assets/landscape3_7.png</file>
+        <file>assets/landscape3_6.png</file>
+        <file>assets/landscape3_5.png</file>
+        <file>assets/landscape3_4.png</file>
+        <file>assets/landscape3_3.png</file>
+        <file>assets/landscape3_2.png</file>
+        <file>assets/landscape3_1.png</file>
+        <file>assets/sky3_11.png</file>
+        <file>assets/sky3_10.png</file>
+        <file>assets/sky3_9.png</file>
+        <file>assets/sky3_8.png</file>
+        <file>assets/sky3_7.png</file>
+        <file>assets/sky3_6.png</file>
+        <file>assets/sky3_5.png</file>
+        <file>assets/sky3_4.png</file>
+        <file>assets/sky3_3.png</file>
+        <file>assets/sky3_2.png</file>
+        <file>assets/sky3_1.png</file>
+        <file>assets/chopper_enemy1.png</file>
     </qresource>
 </RCC>

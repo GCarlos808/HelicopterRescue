@@ -59,6 +59,7 @@ SOURCES       = ../../Civil.cpp \
 		../../FondoScroll.cpp \
 		../../GestorEntidades.cpp \
 		../../Helicoptero.cpp \
+		../../HelicopteroEnemigo.cpp \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
 		../../Misil.cpp \
@@ -82,6 +83,7 @@ OBJECTS       = Civil.o \
 		FondoScroll.o \
 		GestorEntidades.o \
 		Helicoptero.o \
+		HelicopteroEnemigo.o \
 		Inputs.o \
 		MenuPrincipal.o \
 		Misil.o \
@@ -378,12 +380,14 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt6/mkspecs/features/yacc.prf \
 		/usr/lib/qt6/mkspecs/features/lex.prf \
 		../../../../HelicopterRescue.pro ../../Civil.h \
+		../../Disparable.h \
 		../../Drone.h \
 		../../Edificio.h \
 		../../Entidad.h \
 		../../FondoScroll.h \
 		../../GestorEntidades.h \
 		../../Helicoptero.h \
+		../../HelicopteroEnemigo.h \
 		../../Inputs.h \
 		../../MenuPrincipal.h \
 		../../Misil.h \
@@ -401,6 +405,7 @@ DIST          = /usr/lib/qt6/mkspecs/features/spec_pre.prf \
 		../../FondoScroll.cpp \
 		../../GestorEntidades.cpp \
 		../../Helicoptero.cpp \
+		../../HelicopteroEnemigo.cpp \
 		../../Inputs.cpp \
 		../../MenuPrincipal.cpp \
 		../../Misil.cpp \
@@ -1005,8 +1010,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../Inputs.h ../../MenuPrincipal.h ../../Misil.h ../../MisilEnemigo.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../Soldado.h ../../VentanaPuntajes.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../Misil.cpp ../../MisilEnemigo.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../Soldado.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.h ../../Disparable.h ../../Drone.h ../../Edificio.h ../../Entidad.h ../../FondoScroll.h ../../GestorEntidades.h ../../Helicoptero.h ../../HelicopteroEnemigo.h ../../Inputs.h ../../MenuPrincipal.h ../../Misil.h ../../MisilEnemigo.h ../../MotorJuego.h ../../NucleoFisico.h ../../SavedGame.h ../../ScoreEntry.h ../../ScoreManager.h ../../Soldado.h ../../VentanaPuntajes.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Civil.cpp ../../Drone.cpp ../../Edificio.cpp ../../Entidad.cpp ../../FondoScroll.cpp ../../GestorEntidades.cpp ../../Helicoptero.cpp ../../HelicopteroEnemigo.cpp ../../Inputs.cpp ../../MenuPrincipal.cpp ../../Misil.cpp ../../MisilEnemigo.cpp ../../MotorJuego.cpp ../../NucleoFisico.cpp ../../ScoreManager.cpp ../../Soldado.cpp ../../VentanaPuntajes.cpp ../../main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1038,62 +1043,85 @@ qrc_resources.cpp: ../../resources.qrc \
 		../../assets/sky2_1.png \
 		../../assets/sky1_6.png \
 		../../assets/landscape1_2.png \
-		../../assets/landscape2_2.png \
 		../../assets/sky1_10.png \
 		../../assets/sky1_9.png \
+		../../assets/rescue_3.png \
+		../../assets/sky3_1.png \
+		../../assets/obstacle1_3.png \
+		../../assets/landscape2_7.png \
+		../../assets/sky3_6.png \
+		../../assets/sky2_3.png \
+		../../assets/sky2_7.png \
+		../../assets/landscape3_7.png \
+		../../assets/landscape1_5.png \
+		../../assets/sky3_5.png \
+		../../assets/landscape1_10.png \
+		../../assets/sky2_4.png \
+		../../assets/landscape3_2.png \
+		../../assets/landscape3_1.png \
+		../../assets/obstacle2_1.png \
+		../../assets/landscape3_6.png \
+		../../assets/sky3_10.png \
+		../../assets/landscape2_10.png \
+		../../assets/obstacle2_2.png \
+		../../assets/sky3_9.png \
+		../../assets/landscape1_11.png \
+		../../assets/sky1_5.png \
+		../../assets/landscape2_5.png \
+		../../assets/chopper1_1.png \
+		../../assets/missile.png \
+		../../assets/landscape2_6.png \
+		../../assets/landscape1_3.png \
+		../../assets/sky3_3.png \
+		../../assets/landscape1_7.png \
+		../../assets/landscape1_4.png \
+		../../assets/rescue_2.png \
+		../../assets/sky1_7.png \
+		../../assets/landscape2_1.png \
+		../../assets/sky1_1.png \
+		../../assets/landscape3_10.png \
+		../../assets/landscape2_2.png \
 		../../assets/rescue_1.png \
 		../../assets/landscape2_11.png \
 		../../assets/obstacle2_3.png \
 		../../assets/sky2_9.png \
-		../../assets/rescue_3.png \
-		../../assets/obstacle1_3.png \
+		../../assets/landscape3_11.png \
+		../../assets/sky3_2.png \
 		../../assets/sky1_8.png \
 		../../assets/landscape1_9.png \
-		../../assets/landscape2_7.png \
 		../../assets/landscape2_3.png \
-		../../assets/sky2_3.png \
-		../../assets/sky2_7.png \
+		../../assets/landscape3_3.png \
 		../../assets/landscape1_8.png \
-		../../assets/landscape1_5.png \
 		../../assets/landscape2_4.png \
+		../../assets/landscape3_9.png \
 		../../assets/sky2_5.png \
 		../../assets/sky2_2.png \
-		../../assets/landscape1_10.png \
+		../../assets/sky3_4.png \
 		../../assets/sky2_6.png \
-		../../assets/sky2_4.png \
+		../../assets/landscape3_4.png \
 		../../assets/drone.png \
 		../../assets/sky1_4.png \
-		../../assets/obstacle2_1.png \
 		../../assets/obstacle2_4.png \
+		../../assets/sky3_11.png \
 		../../assets/obstacle1_2.png \
-		../../assets/landscape2_10.png \
 		../../assets/obstacle1_1.png \
 		../../assets/obstacle1_4.png \
 		../../assets/landscape2_9.png \
-		../../assets/obstacle2_2.png \
 		../../assets/landscape2_8.png \
 		../../assets/sky2_8.png \
 		../../assets/sky2_10.png \
-		../../assets/landscape1_11.png \
-		../../assets/sky1_5.png \
+		../../assets/sky3_8.png \
+		../../assets/chopper_enemy1.png \
 		../../assets/sky1_11.png \
-		../../assets/chopper1_1.png \
-		../../assets/missile.png \
-		../../assets/landscape2_6.png \
-		../../assets/landscape2_5.png \
-		../../assets/landscape1_3.png \
+		../../assets/landscape3_8.png \
 		../../assets/landscape1_1.png \
+		../../assets/landscape3_5.png \
 		../../assets/landscape1_6.png \
 		../../assets/sky1_3.png \
-		../../assets/landscape1_7.png \
-		../../assets/landscape1_4.png \
-		../../assets/rescue_2.png \
 		../../assets/sky1_2.png \
-		../../assets/sky1_7.png \
-		../../assets/landscape2_1.png \
 		../../assets/soldier.png \
 		../../assets/sky2_11.png \
-		../../assets/sky1_1.png
+		../../assets/sky3_7.png
 	/usr/lib/qt6/rcc -name resources ../../resources.qrc -o qrc_resources.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
@@ -1188,11 +1216,19 @@ GestorEntidades.o: ../../GestorEntidades.cpp ../../GestorEntidades.h \
 		../../Drone.h \
 		../../Misil.h \
 		../../MisilEnemigo.h \
-		../../Soldado.h
+		../../Soldado.h \
+		../../Disparable.h \
+		../../HelicopteroEnemigo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o GestorEntidades.o ../../GestorEntidades.cpp
 
 Helicoptero.o: ../../Helicoptero.cpp ../../Helicoptero.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Helicoptero.o ../../Helicoptero.cpp
+
+HelicopteroEnemigo.o: ../../HelicopteroEnemigo.cpp ../../HelicopteroEnemigo.h \
+		../../Entidad.h \
+		../../Disparable.h \
+		../../Helicoptero.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o HelicopteroEnemigo.o ../../HelicopteroEnemigo.cpp
 
 Inputs.o: ../../Inputs.cpp ../../Inputs.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Inputs.o ../../Inputs.cpp
@@ -1236,7 +1272,8 @@ ScoreManager.o: ../../ScoreManager.cpp ../../ScoreManager.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ScoreManager.o ../../ScoreManager.cpp
 
 Soldado.o: ../../Soldado.cpp ../../Soldado.h \
-		../../Entidad.h
+		../../Entidad.h \
+		../../Disparable.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Soldado.o ../../Soldado.cpp
 
 VentanaPuntajes.o: ../../VentanaPuntajes.cpp ../../VentanaPuntajes.h \

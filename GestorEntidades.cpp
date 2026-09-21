@@ -6,6 +6,8 @@
 #include "Misil.h"
 #include "MisilEnemigo.h"
 #include "Soldado.h"
+#include "HelicopteroEnemigo.h"
+#include "Disparable.h"
 #include <QLineF>
 #include <QRandomGenerator>
 #include <algorithm>
@@ -166,11 +168,21 @@ void GestorEntidades::intentarGenerar(qreal deltaTime) {
     if (tiempoDesdeUltimoSpawn < intervaloSpawn) return;
     tiempoDesdeUltimoSpawn = 0.0;
 
+    if (nivelActual >= 3) {
+        //sin edificios, solo entidades
+        int eleccion = QRandomGenerator::global()->bounded(3);
+        switch (eleccion) {
+        case 0: generarCivil(); break;
+        case 1: generarDrone(); break;
+        case 2: generarHelicopteroEnemigo(); break;
+        }
+        return;
+    }
+
     int eleccion = QRandomGenerator::global()->bounded(3);
     switch (eleccion) {
     case 0: generarEdificio(); break;
     case 1:
-        //nivel 2 la mitad de las veces aparece un Soldado en vez de un Civil
         if (nivelActual >= 2 && QRandomGenerator::global()->bounded(2) == 0) {
             generarSoldado();
         } else {
@@ -304,17 +316,31 @@ void GestorEntidades::generarSoldado() {
 }
 
 void GestorEntidades::procesarDisparosEnemigos() {
-    if (!helicoptero) return;
     for (int i = 0; i < cantidad; ++i) {
         if (!entidades[i] || entidades[i]->tipo() != TipoEntidad::Enemigo) continue;
 
-        Soldado *soldado = dynamic_cast<Soldado*>(entidades[i]);
-        if (!soldado || !soldado->listoParaDisparar()) continue;
+        Disparable *disparador = dynamic_cast<Disparable*>(entidades[i]);
+        if (!disparador || !disparador->listoParaDisparar()) continue;
 
         MisilEnemigo *proyectil = new MisilEnemigo();
-        proyectil->setPos(soldado->x(), soldado->y() + soldado->pixmap().height() / 2.0);
+        proyectil->setPos(disparador->origenDisparo());
         escena->addItem(proyectil);
         agregar(proyectil);
-        soldado->reiniciarCooldownDisparo();
+        disparador->reiniciarCooldownDisparo();
+
     }
+}
+
+void GestorEntidades::generarHelicopteroEnemigo() {
+    if (!escena || !helicoptero) return;
+
+    HelicopteroEnemigo *nuevo = new HelicopteroEnemigo(helicoptero);
+    qreal altoSprite = std::max<qreal>(1.0, nuevo->pixmap().height());
+    int rangoY = int(altoEscena - altoSprite - 20.0);
+    qreal posY = 20.0;
+    if (rangoY > 1) posY = QRandomGenerator::global()->bounded(rangoY);
+
+    nuevo->setPos(anchoEscena, posY);
+    escena->addItem(nuevo);
+    agregar(nuevo);
 }

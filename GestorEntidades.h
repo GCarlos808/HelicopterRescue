@@ -52,6 +52,7 @@ private:
     void procesarDisparosEnemigos();
 
     int nivelActual = 1;
+    void generarHelicopteroEnemigo();
 };
 
 #endif // GESTORENTIDADES_H

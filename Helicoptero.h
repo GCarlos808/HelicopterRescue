@@ -21,6 +21,8 @@ public:
     int vidaActual() const;
     int vidaMaxima() const;
 
+    void setTurbulenciaActiva(bool activa);
+
     bool estaAterrizado() const;
     qreal velocidadVerticalActual() const;
 
@@ -42,6 +44,14 @@ private:
     static const int VIDA_MAXIMA = 3;
     static constexpr qreal SUELO_Y = 480.0;
     static constexpr qreal VELOCIDAD_ATERRIZAJE_SUAVE = 200.0;
+
+    void actualizarViento(qreal deltaTime);
+
+    bool turbulenciaActiva;
+    qreal vientoHorizontal;
+    qreal vientoVertical;
+    qreal tiempoParaCambioViento;
+    static constexpr qreal INTERVALO_CAMBIO_VIENTO = 1.5;
 
 signals:
     void vidaCambiada(int actual, int maximo);

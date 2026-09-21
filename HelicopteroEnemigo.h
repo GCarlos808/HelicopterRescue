@@ -1,11 +1,15 @@
-#ifndef SOLDADO_H
-#define SOLDADO_H
+#ifndef HELICOPTEROENEMIGO_H
+#define HELICOPTEROENEMIGO_H
+
 #include "Entidad.h"
 #include "Disparable.h"
 
-class Soldado : public Entidad, public Disparable {
+class Helicoptero;
+
+class HelicopteroEnemigo : public Entidad, public Disparable {
 public:
-    explicit Soldado(int nivel, QGraphicsItem *parent = nullptr);
+    explicit HelicopteroEnemigo(Helicoptero *objetivo, QGraphicsItem *parent = nullptr);
+
     void actualizar(qreal deltaTime) override;
     TipoEntidad tipo() const override;
 
@@ -14,7 +18,10 @@ public:
     QPointF origenDisparo() const override;
 
 private:
+    Helicoptero *objetivo;
+    qreal velocidadSeguimiento;
     qreal tiempoDesdeUltimoDisparo;
     qreal intervaloDisparo;
 };
-#endif // SOLDADO_H
+
+#endif // HELICOPTEROENEMIGO_H

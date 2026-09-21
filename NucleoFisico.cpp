@@ -344,38 +344,56 @@ void NucleoFisico::completarNivel() {
         misionIniciada = false;
         gestorEntidades->establecerNivel(2);
         fondo->establecerNivel(2);
-        if (textoEstado) {
-            textoEstado->setPlainText("Nivel 1 completado - Despega para el nivel 2");
-            textoEstado->setDefaultTextColor(QColor(120, 255, 160));
-        }
+
         QMessageBox::information(
-            this,
-            "Nivel 1 completado",
+            this, "Nivel 1 completado",
             QString("Entrega en hangar exitosa.\n\n"
                     "Civiles rescatados: %1\n"
                     "Puntos: %2\n\n"
                     "Despega para comenzar el nivel 2.")
                 .arg(rescatados)
                 .arg(puntaje));
-        actualizarHudMision();
-        return;
+
+    } else if (nivelActual == 2) {
+        nivelActual = 3;
+        nivelCompletado = false;
+        misionIniciada = false;
+        gestorEntidades->establecerNivel(3);
+        fondo->establecerNivel(3);
+        helicoptero->setTurbulenciaActiva(true); //tormenta al entrar al nivel 3
+
+        QMessageBox::information(
+            this, "Nivel 2 completado",
+            QString("Entrega en hangar exitosa.\n\n"
+                    "Civiles rescatados: %1\n"
+                    "Puntos: %2\n\n"
+                    "Atención: Se reportan fuertes turbulencias. Despega para el nivel 3.")
+                .arg(rescatados)
+                .arg(puntaje));
+
+    } else {
+        //fin del juego
+        nivelCompletado = true;
+        gestorEntidades->setGeneracionActiva(false);
+        helicoptero->setTurbulenciaActiva(false);
+
+        if (motorJuego) {
+            motorJuego->detener();
+        }
+        if (textoEstado) {
+            textoEstado->setPlainText("Mision completada");
+            textoEstado->setDefaultTextColor(QColor(120, 255, 160));
+        }
+
+        QMessageBox::information(
+            this,
+            "Misión Completada",
+            QString("¡Has terminado toda la misión!\n\n"
+                    "Civiles rescatados: %1\n"
+                    "Puntos finales: %2")
+                .arg(rescatados)
+                .arg(puntaje));
     }
 
-    nivelCompletado = true;
-    if (motorJuego) {
-        motorJuego->detener();
-    }
-    if (textoEstado) {
-        textoEstado->setPlainText("Mision completada");
-        textoEstado->setDefaultTextColor(QColor(120, 255, 160));
-    }
-    QMessageBox::information(
-        this,
-        "Mision completada",
-        QString("Has terminado la mision.\n\n"
-                "Civiles rescatados: %1\n"
-                "Puntos finales: %2")
-            .arg(rescatados)
-            .arg(puntaje));
     actualizarHudMision();
 }

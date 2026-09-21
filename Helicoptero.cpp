@@ -1,4 +1,5 @@
 #include "Helicoptero.h"
+#include <QRandomGenerator>
 #include <algorithm>
 
 Helicoptero::Helicoptero(QGraphicsItem *parent)
@@ -14,6 +15,10 @@ Helicoptero::Helicoptero(QGraphicsItem *parent)
     , vida(VIDA_MAXIMA)
     , tiempoInvulnerable(0.0)
     , aterrizado(true)
+    , turbulenciaActiva(false)
+    , vientoHorizontal(0.0)
+    , vientoVertical(0.0)
+    , tiempoParaCambioViento(0.0)
 {
     QPixmap sprite(":/assets/chopper1_1.png");
     setPixmap(sprite.scaled(110, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -36,9 +41,11 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
         }
     }
 
+    actualizarViento(deltaTime);
+
     // fisica vertical
     const qreal empuje = 900.0;
-    qreal aceleracionNeta = gravedad;
+    qreal aceleracionNeta = gravedad + vientoVertical;
     if (ascensoActivo) aceleracionNeta -= empuje;
 
     velocidadVertical += aceleracionNeta * deltaTime;
@@ -48,7 +55,7 @@ void Helicoptero::actualizarFisica(qreal deltaTime) {
     resolverAterrizaje();
 
     // mov horizontal
-    qreal desplazamientoX = 0.0;
+    qreal desplazamientoX = vientoHorizontal;
     if (derechaActiva) desplazamientoX += velocidadHorizontal;
     if (izquierdaActiva) desplazamientoX -= velocidadHorizontal;
     setX(x() + desplazamientoX * deltaTime);
@@ -119,6 +126,25 @@ void Helicoptero::recibirDano(int cantidad) {
 
     if (vida == 0) {
         emit destruido();
+    }
+}
+
+void Helicoptero::setTurbulenciaActiva(bool activa) {
+    turbulenciaActiva = activa;
+    if (!activa) {
+        vientoHorizontal = 0.0;
+        vientoVertical = 0.0;
+    }
+}
+
+void Helicoptero::actualizarViento(qreal deltaTime) {
+    if (!turbulenciaActiva) return;
+
+    tiempoParaCambioViento -= deltaTime;
+    if (tiempoParaCambioViento <= 0.0) {
+        vientoHorizontal = QRandomGenerator::global()->bounded(-180, 181); // px/s
+        vientoVertical = QRandomGenerator::global()->bounded(-90, 91);
+        tiempoParaCambioViento = INTERVALO_CAMBIO_VIENTO;
     }
 }
 

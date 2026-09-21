@@ -25,3 +25,6 @@ bool Soldado::listoParaDisparar() const {
 void Soldado::reiniciarCooldownDisparo() {
     tiempoDesdeUltimoDisparo = 0.0;
 }
+QPointF Soldado::origenDisparo() const {
+    return QPointF(x(), y() + pixmap().height() / 2.0);
+}
